@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文森 Vinson — 插画设计 × 文创产品</title>
+<meta name="description" content="文森（Vinson）— 插画设计师与文创产品创作者。插画设计、文创产品、IP 形象、品牌视觉与包装插画。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%231F1C15'/%3E%3Cpath d='M18 20 L32 46 L46 20' fill='none' stroke='%23F1EDE3' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='27' y='26' width='10' height='10' rx='2' fill='%23A4442E'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://miaoda.feishu.cn">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap">
+<style>
+/* ============================================================
+   文森 Vinson · 个人网站预览
+   视觉语言：浅色纸感 / 大排印 / 发丝线 / 克制动效
+   ============================================================ */
+:root{
+  --paper: #F1EDE3;
+  --paper-soft: #F7F4EC;
+  --paper-deep: #E8E2D3;
+  --ink: #1F1C15;
+  --ink-soft: #77705F;
+  --line: rgba(31,28,21,.15);
+  --line-strong: rgba(31,28,21,.32);
+  --accent: #A4442E;
+  --font-serif: "Noto Serif SC","Songti SC","SimSun",serif;
+  --font-sans: "Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;
+  --font-latin: "Cormorant Garamond","Noto Serif SC",serif;
+  --ease: cubic-bezier(.22,1,.36,1);
+  --ease-zoom: cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-sans);
+  font-weight:300;
+  line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--accent);color:var(--paper-soft)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;background:none;border:none;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* 纸张颗粒质感 */
+.grain{
+  position:fixed;inset:0;z-index:2000;pointer-events:none;opacity:.5;
+  mix-blend-mode:multiply;
+}
+.grain svg{width:100%;height:100%}
+
+/* 自定义光标（桌面端开启） */
+body.has-cursor{cursor:none}
+body.has-cursor a,body.has-cursor button{cursor:none}
+.cursor-dot{
+  position:fixed;left:0;top:0;width:10px;height:10px;border-radius:50%;
+  background:var(--ink);z-index:4000;pointer-events:none;opacity:0;
+  transform:translate(calc(var(--cx,50vw) - 50%), calc(var(--cy,50vh) - 50%));
+  transition:width .35s var(--ease),height .35s var(--ease),background .3s,opacity .3s;
+  will-change:transform;
+}
+.cursor-dot.on{opacity:1}
+.cursor-dot.on-dark{background:var(--paper)}
+.cursor-dot.is-big{width:64px;height:64px;background:var(--accent)}
+.cursor-dot .cursor-label{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-size:12px;letter-spacing:.12em;color:var(--paper-soft);
+  opacity:0;transition:opacity .3s;white-space:nowrap;
+}
+.cursor-dot.is-big .cursor-label{opacity:1}
+
+/* ============ 布局容器 ============ */
+.wrap{width:min(1380px,100% - 48px);margin:0 auto}
+@media(min-width:768px){.wrap{width:min(1380px,100% - 96px)}}
+@media(min-width:1200px){.wrap{width:min(1380px,100% - 160px)}}
+
+/* 章节标签（sentence case 小标签） */
+.kicker{
+  font-family:var(--font-latin);font-style:italic;font-weight:500;
+  font-size:15px;color:var(--ink-soft);margin-bottom:14px;
+}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;border-top:1px solid var(--line);padding-top:22px;margin-bottom:56px}
+.section-head .en{font-family:var(--font-latin);font-size:16px;color:var(--ink-soft);white-space:nowrap}
+
+/* 标题滚动揭示 */
+.reveal{overflow:hidden}
+.reveal .reveal-inner{display:block;transform:translateY(112%);transition:transform 1.1s var(--ease)}
+.reveal.in-view .reveal-inner{transform:translateY(0)}
+.fade-up{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.fade-up.in-view{opacity:1;transform:none}
+
+/* ============ 顶栏导航 ============ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1500;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(0); /* 无毛玻璃：纯纸色 + 发丝线 */
+  transform:translateY(-101%);transition:transform .7s var(--ease);
+}
+.nav.is-visible{transform:none}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{font-family:var(--font-serif);font-weight:700;font-size:19px;letter-spacing:.02em;display:flex;align-items:baseline;gap:8px}
+.nav-logo .zh{color:var(--accent);font-size:15px;font-weight:500}
+.nav-links{display:none;align-items:center;gap:34px}
+@media(min-width:768px){.nav-links{display:flex}}
+.nav-links a{font-size:14px;color:var(--ink-soft);position:relative;padding:6px 0;transition:color .3s}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
+body:not(.has-cursor) .nav-links a:hover,.nav-links a.js-hover{color:var(--ink)}
+body:not(.has-cursor) .nav-links a:hover::after,.nav-links a.js-hover::after{transform:scaleX(1)}
+.nav-burger{display:flex;flex-direction:column;gap:5px;padding:10px}
+@media(min-width:768px){.nav-burger{display:none}}
+.nav-burger span{width:22px;height:1.5px;background:var(--ink);transition:transform .4s var(--ease),opacity .3s}
+.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* 移动端全屏菜单 */
+.menu-mobile{
+  position:fixed;inset:0;z-index:1400;background:var(--paper-deep);
+  display:flex;flex-direction:column;justify-content:center;padding:48px;
+  transform:translateY(-100%);transition:transform .7s var(--ease);visibility:hidden;
+}
+.menu-mobile.open{transform:none;visibility:visible}
+.menu-mobile a{font-family:var(--font-serif);font-size:34px;font-weight:600;padding:14px 0;border-bottom:1px solid var(--line)}
+.menu-mobile .meta{margin-top:40px;font-size:13px;color:var(--ink-soft)}
+
+/* ============ Hero：全屏轮播，sticky 钉住，滚动时被下方白色区遮盖 ============ */
+.hero{position:sticky;top:0;z-index:1;height:100vh;height:100svh;min-height:calc(100vh + 10px);overflow:hidden;background:var(--paper-deep)}
+/* 一句式定位：粗黑体白字，与左上角标签左对齐、与右下角控制条底对齐 */
+.hero-note{
+  max-width:760px;font-family:var(--font-sans);font-weight:800;letter-spacing:.01em;
+  font-size:clamp(16px,2vw,28px);line-height:1.35;color:#fff;margin-bottom:0;
+  text-align:left;text-shadow:0 2px 18px rgba(20,18,12,.35);
+}
+
+/* 轮播图铺满整个浏览器视口 */
+.hero-media{position:absolute;inset:0}
+.slides{position:absolute;inset:0;overflow:hidden;background:var(--paper-deep)}
+.slide{position:absolute;inset:0;opacity:0;transform:translateX(0);transition:opacity 1.5s cubic-bezier(.22,1,.36,1);pointer-events:none}
+.slide.is-active{opacity:1;pointer-events:auto}
+.slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.03);transition:transform .7s var(--ease)}
+.slide.is-active img{transform:scale(1)}
+.slide-tag{
+  position:absolute;top:26px;right:24px;left:auto;background:var(--paper);color:var(--ink);
+  font-size:12px;padding:9px 16px;border-radius:99px;letter-spacing:.05em;z-index:2;
+  box-shadow:0 2px 18px rgba(31,28,21,.08);
+}
+/* 首页顶部品牌文字：放在图片顶部左上角 */
+.hero-brand{
+  position:absolute;top:26px;left:24px;z-index:5;display:flex;align-items:baseline;gap:10px;
+  color:#fff;pointer-events:none;text-shadow:0 2px 18px rgba(20,18,12,.35);
+}
+.hero-brand .hb-zh{font-family:var(--font-serif);font-size:22px;font-weight:700;letter-spacing:.06em}
+.hero-brand .hb-en{font-family:var(--font-latin);font-style:italic;font-size:18px;opacity:.85}
+
+/* 文字层：叠加在轮播图片上层 */
+.hero-overlay{position:absolute;inset:0;z-index:4;display:flex;align-items:flex-end;pointer-events:none}
+.hero-overlay .wrap{position:absolute;left:24px;right:24px;bottom:38px;width:auto;margin:0;pointer-events:auto}
+@media(max-width:640px){
+  .hero-overlay .wrap{left:14px;right:14px;bottom:32px}
+  .slide-tag{top:16px;right:14px;left:auto}
+  .hero-brand{top:16px;left:14px}
+}
+.hero-controls{
+  position:absolute;right:24px;bottom:38px;z-index:5;display:flex;align-items:center;gap:16px;
+  background:var(--paper);padding:10px 16px;border-radius:99px;border:1px solid var(--line);
+  box-shadow:0 2px 18px rgba(31,28,21,.08);pointer-events:auto;
+}
+.hero-count{font-family:var(--font-latin);font-size:15px;color:var(--ink)}
+.hero-count b{font-weight:600}
+.hero-count em{font-style:normal;color:var(--ink-soft);margin-left:2px}
+.hero-dots{display:flex;gap:7px}
+.hero-dots span{width:6px;height:6px;border-radius:99px;background:var(--line-strong);transition:background .3s,width .35s var(--ease)}
+.hero-dots span.is-active{background:var(--accent);width:20px}
+.hero-btns{display:flex;gap:8px}
+.hero-btn{
+  width:38px;height:38px;border-radius:99px;border:1px solid var(--line-strong);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .3s,color .3s,border-color .3s;
+}
+body:not(.has-cursor) .hero-btn:hover,.hero-btn.js-hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.hero-btn svg{width:16px;height:16px}
+.hero-scroll-hint{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:5;font-family:var(--font-latin);font-style:italic;font-size:12px;color:var(--ink);letter-spacing:.1em;display:none;text-shadow:0 1px 10px rgba(255,255,255,.55)}
+@media(min-width:768px){.hero-scroll-hint{display:block}}
+@media(max-width:640px){
+  .hero-controls{right:14px;bottom:32px;padding:8px 12px;gap:10px}
+  .hero-btn{width:32px;height:32px}
+}
+
+/* ============ 定位句（白色底，滚动时向上遮盖首页轮播图） ============ */
+.statement{padding:120px 0 108px;position:relative;z-index:2;background:#fff;border-top:1px solid var(--line)}
+.statement p{
+  font-family:var(--font-serif);font-weight:500;
+  font-size:clamp(22px,3.6vw,42px);line-height:1.5;max-width:19em;
+}
+.statement p em{font-style:normal;color:var(--accent)}
+
+/* ============ About ============ */
+.about{padding:150px 0;border-top:1px solid var(--line);background:var(--paper-soft);position:relative;z-index:2}
+.about-grid{display:grid;gap:40px}
+@media(min-width:900px){.about-grid{grid-template-columns:1fr 1.4fr;gap:90px}}
+.body .lead{font-family:var(--font-serif);font-weight:700;font-size:clamp(24px,3.2vw,40px);line-height:.7;color:var(--ink);margin:44px 0 28px}
+.about-photo{aspect-ratio:3/4;max-width:360px;margin-left:clamp(20px,3.5vw,44px);overflow:hidden;background:#E3DDCC;border:1px solid rgba(31,28,21,.08);border-radius:14px;perspective:1000px;will-change:transform;transition:transform .5s var(--ease)}
+.about-photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .45s var(--ease);will-change:transform}
+.about-grid .body p{font-size:15px;color:var(--ink-soft);margin-bottom:18px;max-width:52em}
+.about-grid .body p strong{color:var(--ink);font-weight:500}
+.about-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+.about-tags span{
+  font-size:12px;color:var(--ink);border:1px solid var(--line-strong);
+  padding:7px 14px;border-radius:99px;letter-spacing:.05em;
+}
+.about-line{width:1px;height:100%;background:var(--line)}
+@media(min-width:900px){.about-grid{grid-template-columns:1fr 1.4fr}.about-line{grid-column:1;grid-row:1}}
+@media(max-width:899px){.body .lead{margin-top:30px}.about-photo{margin-left:0}}
+/* 教育背景条目 */
+.about-edu{margin-top:46px;border-top:1px solid var(--line);padding-top:30px}
+.edu-link{display:flex;align-items:center;gap:16px;width:fit-content;max-width:100%}
+.edu-logo{width:60px;height:60px;border-radius:50%;flex:none;background:#fff url(assets/edu-logo.png) no-repeat center/cover}
+.edu-text{display:flex;flex-direction:column;gap:4px}
+.edu-name{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:.03em;transition:color .3s}
+.edu-degree{font-size:12.5px;color:var(--ink-soft);letter-spacing:.04em}
+.edu-arrow{margin-left:auto;padding-left:10px;font-size:13px;color:var(--ink-soft);transition:transform .3s var(--ease),color .3s}
+body:not(.has-cursor) .edu-link:hover .edu-name,.edu-link.js-hover .edu-name{color:var(--accent)}
+body:not(.has-cursor) .edu-link:hover .edu-arrow,.edu-link.js-hover .edu-arrow{transform:translateX(5px);color:var(--accent)}
+
+/* ============ 精选作品（文字目录） ============ */
+.works{padding:110px 0;border-top:1px solid var(--line);position:relative;z-index:2;background:var(--paper)}
+.works-dir{display:grid;grid-template-columns:1fr;gap:48px}
+@media(min-width:900px){.works-dir{grid-template-columns:1.2fr .8fr;gap:80px}}
+.dir-list{border-top:1px solid var(--line-strong)}
+.dir-row{
+  display:grid;grid-template-columns:44px 1fr;gap:6px 18px;padding:26px 8px;
+  border-bottom:1px solid var(--line);position:relative;transition:background .35s var(--ease);
+}
+@media(min-width:900px){.dir-row{grid-template-columns:44px 1.1fr .9fr;align-items:baseline}}
+.dir-row .no{font-family:var(--font-latin);font-size:14px;color:var(--ink-soft);transition:color .3s}
+.dir-row .nm{font-family:var(--font-serif);font-size:clamp(20px,2.4vw,30px);font-weight:600;line-height:1.2;transition:font-size .35s var(--ease),color .3s}
+.dir-row .tp{font-size:13px;color:var(--ink-soft);grid-column:2;transition:color .3s,opacity .3s}
+@media(min-width:900px){.dir-row .tp{grid-column:3;text-align:right}}
+.dir-row .arr{position:absolute;right:10px;top:auto;bottom:26px;transform:translateX(12px);opacity:0;transition:opacity .35s,transform .45s var(--ease)}
+.dir-row .arr svg{width:20px;height:20px}
+body:not(.has-cursor) .dir-row:hover .arr,.dir-row.js-hover .arr{opacity:1;transform:translateX(0)}
+body:not(.has-cursor) .dir-row:hover .nm,.dir-row.js-hover .nm{color:var(--accent);font-size:clamp(21.5px,2.6vw,32px)}
+body:not(.has-cursor) .dir-row:hover .tp,.dir-row.js-hover .tp{opacity:0}
+body:not(.has-cursor) .dir-row:hover .no,.dir-row.js-hover .no{color:var(--accent)}
+@media(hover:none){.dir-row .arr{opacity:1;transform:translateX(0)}}
+.dir-preview{position:relative;border-radius:2px;overflow:hidden;background:var(--paper-deep);aspect-ratio:4/5;max-height:340px;align-self:start;margin-left:auto;margin-right:125px;margin-top:-68px;transition:opacity .9s var(--ease),transform .9s cubic-bezier(.22,1,.36,1)}
+.dir-preview img{width:100%;height:100%;object-fit:cover}
+.dir-preview-label{position:absolute;left:14px;bottom:14px;background:var(--paper);color:var(--ink);font-size:12px;padding:8px 14px;border-radius:99px;letter-spacing:.04em;opacity:0;transition:opacity .35s var(--ease)}
+.dir-preview-label.show{opacity:1}
+@media(max-width:899px){.dir-preview{display:none}}
+
+/* 作品详情 overlay（二级页面） */
+.overlay{
+  position:fixed;inset:0;z-index:1600;background:var(--paper);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;visibility:hidden;opacity:0;
+  transition:opacity .45s var(--ease),visibility 0s linear .45s;
+}
+.overlay.open{visibility:visible;opacity:1;transition:opacity .45s var(--ease)}
+.overlay .ov-inner{transform:translateY(34px);transition:transform .65s var(--ease)}
+.overlay.open .ov-inner{transform:none}
+.overlay .ov-inner{width:min(1080px,100% - 48px);margin:0 auto;padding:132px 0 80px}
+@media(min-width:768px){.overlay .ov-inner{width:min(1080px,100% - 96px)}}
+
+/* 过场动画舞台：前后（纵深）交错切换 —— 旧页后退到深处淡出，新页从更深层浮起前进到全屏 */
+.ov-stage{transition:transform .65s var(--ease-zoom),opacity .45s var(--ease-zoom);transform-origin:50% 50%;transform-style:preserve-3d}
+.ov-stage.go-out{transform:perspective(1400px) translateZ(-460px);opacity:0}
+.ov-stage.in-deep{transform:perspective(1400px) translateZ(-700px);opacity:0;transition:none}
+.ov-stage.go-in{transform:perspective(1400px) translateZ(0);opacity:1}
+
+/* 二级页面顶部导航：与首页导航同步固定，滚动到底部时向上收起 */
+.ov-nav{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  background:color-mix(in srgb,var(--paper) 90%,transparent);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-101%);transition:transform .5s var(--ease);
+}
+.ov-nav.is-show{transform:none}
+.ov-nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.ov-close{
+  width:46px;height:46px;border-radius:99px;
+  border:1px solid var(--line-strong);background:var(--paper);
+  display:flex;align-items:center;justify-content:center;transition:transform .4s var(--ease),border-color .3s;
+}
+body:not(.has-cursor) .ov-close:hover,.ov-close.js-hover{transform:rotate(90deg);border-color:var(--ink)}
+.ov-close svg{width:18px;height:18px}
+
+/* 下一部作品：全屏图片 + 图片上层的白色外框（放大时外框始终存在）+ 居中大字标题 + 白色进度条 */
+.next-work{position:relative;height:100vh;height:100svh;margin-top:110px;cursor:pointer}
+.next-frame{position:absolute;inset:0;overflow:hidden;background:var(--paper)}
+.next-frame::after{content:"";position:absolute;inset:0;border:28px solid var(--paper);pointer-events:none;z-index:2}
+.next-img{width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1;transform:scale(1);transition:transform .16s linear;will-change:transform}
+.next-body{
+  position:absolute;inset:28px;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;pointer-events:none;padding:0 32px;
+}
+.next-body h3{
+  font-family:var(--font-serif);font-weight:700;line-height:1.15;
+  font-size:clamp(44px,8vw,118px);color:#fff;text-shadow:0 3px 34px rgba(20,18,12,.5);
+}
+.next-go{margin-top:20px;font-size:14px;letter-spacing:.22em;color:rgba(255,255,255,.92);text-shadow:0 1px 12px rgba(20,18,12,.4)}
+.next-bar{width:min(440px,72vw);height:5px;background:rgba(255,255,255,.35);border-radius:99px;margin:30px auto 0;overflow:hidden;box-shadow:0 1px 10px rgba(20,18,12,.25)}
+.next-bar i{display:block;height:100%;width:0;background:#fff;transition:width .08s linear}
+@media(max-width:640px){
+  .next-frame::after{border-width:16px}
+  .next-body{inset:16px}
+  .next-body h3{font-size:clamp(36px,11vw,64px)}
+  .next-go{font-size:12px}
+}
+.ov-head{display:flex;flex-direction:column;gap:8px;margin-bottom:40px}
+.ov-head .k{font-family:var(--font-latin);font-style:italic;font-size:15px;color:var(--ink-soft)}
+.ov-head h2{font-family:var(--font-serif);font-size:clamp(28px,5vw,52px);font-weight:700;line-height:1.2}
+.ov-head .row{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--ink-soft);margin-top:10px}
+.ov-img{border-radius:2px;overflow:hidden;margin-bottom:36px}
+.ov-img img{width:100%;aspect-ratio:16/10;object-fit:cover}
+.ov-body{display:grid;gap:28px}
+@media(min-width:768px){.ov-body{grid-template-columns:1.2fr .8fr;gap:60px}}
+.ov-body .desc{font-size:15px;color:var(--ink-soft)}
+.ov-body .desc p{margin-bottom:14px}
+.ov-body .desc p strong{color:var(--ink);font-weight:500}
+.ov-side{border-top:1px solid var(--line);padding-top:22px;font-size:13px;color:var(--ink-soft)}
+.ov-side .item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.ov-side .item b{color:var(--ink);font-weight:500;text-align:right}
+
+/* ============ 服务 ============ */
+.services{padding:110px 0;border-top:1px solid var(--line);background:var(--paper-deep);position:relative;z-index:2}
+.svc-list{border-top:1px solid var(--line-strong)}
+.svc-row{
+  display:grid;grid-template-columns:44px 1fr;gap:12px 20px;padding:30px 10px;
+  border-bottom:1px solid var(--line);transition:background .4s var(--ease),color .4s;
+  position:relative;overflow:hidden;cursor:pointer;
+}
+@media(min-width:768px){.svc-row{grid-template-columns:44px 1.2fr 1fr;align-items:baseline}}
+.svc-row .no{font-family:var(--font-latin);font-size:14px;color:var(--ink-soft);transition:color .3s}
+.svc-row .nm{font-family:var(--font-serif);font-size:clamp(21px,2.6vw,32px);font-weight:600;transition:transform .5s var(--ease)}
+.svc-row .ds{font-size:13px;color:var(--ink-soft);grid-column:2;transition:color .3s}
+@media(min-width:768px){.svc-row .ds{grid-column:3;text-align:right}}
+body:not(.has-cursor) .svc-row:hover,.svc-row.hover,.svc-row.js-hover{background:var(--ink);color:var(--paper)}
+body:not(.has-cursor) .svc-row:hover .no,.svc-row.hover .no,.svc-row.js-hover .no{color:var(--accent)}
+body:not(.has-cursor) .svc-row:hover .ds,.svc-row.hover .ds,.svc-row.js-hover .ds{color:color-mix(in srgb,var(--paper) 72%,transparent)}
+body:not(.has-cursor) .svc-row:hover .nm,.svc-row.hover .nm,.svc-row.js-hover .nm{transform:translateX(10px)}
+
+/* ============ 联系 ============ */
+.contact{padding:120px 0 90px;border-top:1px solid var(--line);background:var(--paper-soft);position:relative;z-index:2}
+.contact .big{
+  font-family:var(--font-serif);font-weight:700;line-height:1.2;
+  font-size:clamp(34px,6vw,76px);margin-bottom:18px;
+}
+.contact .big em{font-style:italic;color:var(--accent);margin-right:10px}
+.contact-mail{
+  display:inline-block;font-family:var(--font-latin);font-style:italic;
+  font-size:clamp(22px,4vw,44px);color:var(--ink);border-bottom:1px solid var(--ink);
+  padding-bottom:6px;transition:color .3s,border-color .3s;margin-bottom:56px;
+}
+body:not(.has-cursor) .contact-mail:hover,.contact-mail.js-hover{color:var(--accent);border-color:var(--accent)}
+.contact-social{display:flex;flex-wrap:wrap;gap:34px;border-top:1px solid var(--line);padding-top:28px}
+.contact-social a{font-size:14px;color:var(--ink-soft);position:relative;padding-bottom:4px;transition:color .3s}
+.contact-social a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
+body:not(.has-cursor) .contact-social a:hover,.contact-social a.js-hover{color:var(--ink)}
+body:not(.has-cursor) .contact-social a:hover::after,.contact-social a.js-hover::after{transform:scaleX(1)}
+.contact-social .note{font-size:12px;color:var(--ink-soft);opacity:.7}
+
+/* ============ 页脚 ============ */
+.footer{padding:40px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-soft);position:relative;z-index:2;background:var(--paper)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.footer .top{font-family:var(--font-latin);font-style:italic;font-size:13px;color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:2px}
+body:not(.has-cursor) .footer .top:hover,.footer .top.js-hover{color:var(--accent);border-color:var(--accent)}
+
+/* 章节大标题 */
+.section-head h2{font-family:var(--font-serif);font-weight:700;font-size:clamp(26px,3.6vw,44px);line-height:1.2}
+
+/* toast 提示 */
+.toast{
+  position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--paper);font-size:13px;padding:12px 22px;border-radius:99px;
+  opacity:0;pointer-events:none;z-index:2200;transition:opacity .4s,transform .4s var(--ease);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (prefers-reduced-motion: reduce){
+  .reveal .reveal-inner{transform:none;transition:none}
+  .fade-up{opacity:1;transform:none;transition:none}
+  .hero-title .line-inner,.slide img,.slide{transition:none}
+  body.has-cursor{cursor:auto}
+  .cursor-dot{display:none}
+}
+
+/* ============ 服务区「我们聊聊吧」深色按钮 ============ */
+.svc-cta{
+  display:block;width:fit-content;margin-left:auto;margin-top:46px;background:var(--ink);color:var(--paper);
+  padding:14px 34px;border-radius:8px;font-size:15px;letter-spacing:.08em;
+  transition:background .35s var(--ease),color .35s;
+}
+body:not(.has-cursor) .svc-cta:hover,.svc-cta.js-hover{background:var(--accent);color:var(--paper)}
+
+/* ============ 服务二级页（白色，顶部固定导航 + 创作流程 + 配图位） ============ */
+.svc-view{
+  position:fixed;inset:0;z-index:2900;background:#fff;color:var(--ink);
+  overflow-y:auto;overscroll-behavior:contain;opacity:0;pointer-events:none;transition:opacity .5s var(--ease);
+}
+.svc-view.open{opacity:1;pointer-events:auto}
+.sv-nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.sv-nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+.sv-nav .nav-links a{color:var(--ink-soft)}
+.sv-nav .nav-links a::after{background:var(--ink)}
+.sv-close{background:none;border:none;cursor:pointer;color:var(--ink);opacity:.6;padding:8px;transition:opacity .3s,color .3s;display:flex;align-items:center}
+.sv-close svg{width:26px;height:26px}
+body:not(.has-cursor) .sv-close:hover,.sv-close.js-hover{opacity:1;color:var(--accent)}
+.sv-inner{max-width:1180px;margin:0 auto;padding:clamp(64px,9vh,110px) 28px 0}
+.sv-kicker{font-family:var(--font-latin);font-style:italic;font-size:14px;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px}
+.sv-title{font-family:var(--font-serif);font-size:clamp(34px,5vw,64px);font-weight:700;line-height:1.2;letter-spacing:.02em;margin-bottom:16px}
+.sv-sub{font-size:15px;color:var(--ink-soft);max-width:34em;line-height:1.9;margin-bottom:40px}
+.sv-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px 64px;align-items:start}
+.sv-grid[hidden]{display:none}
+@media(max-width:899px){.sv-grid{grid-template-columns:1fr;gap:56px}}
+.sv-flow{margin-bottom:56px}
+.sv-flow:last-child{margin-bottom:0}
+.sv-flow-title{font-family:var(--font-serif);font-size:22px;font-weight:600;margin-bottom:6px}
+.sv-flow-title em{font-family:var(--font-latin);font-style:italic;font-weight:400;font-size:.62em;color:var(--ink-soft);margin-left:10px;letter-spacing:.04em}
+.sv-steps{position:relative;border-top:none}
+.sv-steps::before{content:"";position:absolute;left:14px;top:36px;bottom:36px;width:1px;background:var(--line-strong)}
+.sv-step{display:grid;grid-template-columns:30px 1fr;gap:18px;padding:22px 0;border-bottom:none;position:relative}
+.sv-step .no{
+  width:30px;height:30px;border:1px solid var(--accent);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-latin);font-style:italic;font-size:11px;color:var(--accent);
+  background:#fff;position:relative;z-index:1;
+}
+.sv-step h3{font-family:var(--font-serif);font-size:19px;font-weight:600;margin-bottom:6px;line-height:1.5}
+.sv-step h3 em{font-family:var(--font-latin);font-style:italic;font-weight:400;font-size:.7em;color:var(--ink-soft);margin-left:10px;letter-spacing:.04em}
+.sv-step p{font-size:14.5px;color:var(--ink-soft);line-height:1.9;max-width:36em}
+.sv-visual{
+  width:78%;margin-left:auto;align-self:stretch;
+  display:flex;flex-direction:column;gap:10px;
+}
+.sv-visual-item{
+  position:relative;min-height:0;
+  flex:1 1 0%;border:1px dashed var(--line-strong);border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-soft);font-family:var(--font-latin);font-style:italic;font-size:13px;letter-spacing:.1em;
+  transition:flex-grow .55s cubic-bezier(.34,1.4,.64,1),color .35s var(--ease);
+}
+.sv-visual-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;border-radius:12px}
+.sv-visual-item.has-img{border-style:solid;border-color:transparent;color:transparent}
+/* 悬停：该格仅垂直方向伸展并挤压相邻格（边缘格只挤压有图片的一侧，flex 布局自动实现），无边框变化 */
+body:not(.has-cursor) .sv-visual-item:hover,.sv-visual-item.js-hover{
+  flex-grow:1.7;color:var(--accent);
+}
+@media(max-width:899px){.sv-visual{width:100%;height:480px}}
+
+.sv-cta-wrap{max-width:1180px;margin:0 auto;padding:40px 28px 0}
+.svc-view .svc-cta{margin-left:0;margin-top:0}
+.svc-view .cv-bottom{margin-top:60px}
+
+/* ============ 深色联系页（登记信息并发送消息） ============ */
+.contact-view{
+  position:fixed;inset:0;z-index:3000;background:var(--ink);color:var(--paper);
+  overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .6s var(--ease);
+}
+.contact-view.open{opacity:1;pointer-events:auto}
+.cv-inner{max-width:1180px;margin:0 auto;padding:clamp(60px,9vh,110px) 28px 0}
+.cv-hero{display:grid;grid-template-columns:1fr 1fr;gap:60px 80px;align-items:start}
+.cv-close{
+  position:absolute;top:26px;right:26px;z-index:2;color:var(--paper);opacity:.65;
+  font-family:var(--font-latin);font-style:italic;font-size:14px;letter-spacing:.08em;
+  padding:10px 6px;transition:opacity .3s,color .3s;
+}
+body:not(.has-cursor) .cv-close:hover,.cv-close.js-hover{opacity:1;color:var(--accent)}
+.cv-kicker{font-family:var(--font-latin);font-style:italic;font-size:14px;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px}
+.cv-title{font-family:var(--font-serif);font-size:clamp(34px,5vw,64px);font-weight:700;line-height:1.2;letter-spacing:.02em}
+.cv-title em{font-family:var(--font-latin);font-style:italic;font-weight:400;font-size:.55em;color:var(--paper);opacity:.75;margin-left:14px;letter-spacing:.03em}
+.cv-sub{font-size:15px;color:var(--paper);opacity:.62;max-width:34em;margin-top:18px;line-height:1.9}
+.cv-left .cv-mail{margin-top:44px}
+.cv-form{margin-top:0;padding-top:2px}
+.cv-row{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
+.cv-field{margin-bottom:30px}
+.cv-field label{display:block;font-size:13px;color:var(--paper);opacity:.55;letter-spacing:.06em;margin-bottom:10px}
+.cv-field input,.cv-field textarea{
+  width:100%;background:transparent;border:none;border-bottom:1px solid rgba(241,237,227,.22);
+  color:var(--paper);font-family:var(--font-sans);font-size:17px;font-weight:300;
+  padding:10px 2px;transition:border-color .3s;
+}
+.cv-field input:focus,.cv-field textarea:focus{outline:none;border-color:var(--accent)}
+.cv-field textarea{resize:vertical;min-height:120px;line-height:1.8}
+.cv-field textarea::-webkit-resizer{
+  width:16px;height:16px;border:none;
+  background:linear-gradient(135deg,transparent 0 48%,rgba(241,237,227,.6) 48% 56%,transparent 56%),
+             linear-gradient(135deg,transparent 0 70%,rgba(241,237,227,.35) 70% 76%,transparent 76%);
+  border-radius:0 0 6px 0;
+}
+.cv-options{display:flex;gap:14px;flex-wrap:wrap}
+.cv-opt{
+  background:transparent;border:1px solid rgba(241,237,227,.28);color:var(--paper);
+  padding:12px 26px;border-radius:8px;font-size:14px;letter-spacing:.05em;cursor:pointer;
+  transition:border-color .3s,color .3s,background .3s;
+}
+body:not(.has-cursor) .cv-opt:hover,.cv-opt.js-hover{border-color:var(--accent);color:var(--accent)}
+.cv-opt.is-on{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.cv-send{
+  margin-top:14px;background:var(--paper);color:var(--ink);border:none;
+  padding:14px 34px;border-radius:8px;font-size:15px;letter-spacing:.08em;cursor:pointer;
+  transition:background .35s var(--ease),color .35s;
+}
+body:not(.has-cursor) .cv-send:hover,.cv-send.js-hover{background:var(--accent);color:var(--paper)}
+.cv-mail{font-size:13px;color:var(--paper);opacity:.5;margin-top:34px}
+.cv-mail a{color:var(--paper);opacity:.8;border-bottom:1px solid rgba(241,237,227,.3);padding-bottom:2px;transition:color .3s,border-color .3s}
+body:not(.has-cursor) .cv-mail a:hover,.cv-mail a.js-hover{color:var(--accent);border-color:var(--accent)}
+/* 联系页下方浅色区：与首页相同的底部组件 */
+.cv-bottom{background:var(--paper);color:var(--ink);margin-top:120px;padding:120px 0 0}
+.cv-bottom .kicker{color:var(--ink-soft)}
+.cv-bottom .big{color:var(--ink)}
+.cv-bottom .big em{font-style:italic;color:var(--accent);margin-right:10px}
+.cv-bottom .contact-mail{font-size:clamp(20px,2.6vw,30px);color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:6px;display:inline-block;margin-top:26px;transition:color .3s,border-color .3s}
+body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js-hover{color:var(--accent);border-color:var(--accent)}
+.cv-bottom .contact-social{margin-top:44px}
+@media(max-width:860px){.cv-hero{grid-template-columns:1fr;gap:48px}}
+/* 复制邮箱提示 */
+.copy-tip{
+  position:fixed;left:50%;top:46%;z-index:5000;
+  transform:translate(-50%,-50%) translateY(10px);
+  background:var(--paper);color:var(--ink);
+  border-radius:10px;padding:14px 32px;font-size:14px;letter-spacing:.06em;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease),transform .3s var(--ease);
+}
+.copy-tip.show{opacity:1;transform:translate(-50%,-50%) translateY(0)}
+@media(max-width:640px){
+  .cv-close{top:18px;right:18px}
+  .cv-inner{padding:70px 20px 0}
+  .cv-row{grid-template-columns:1fr}
+  .cv-send{width:100%}
+}
+</style>
+</head>
+<body>
+<!-- 纸张颗粒质感层 -->
+<div class="grain" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)" opacity="0.05"/></svg>
+</div>
+
+<!-- ============ 顶栏导航 ============ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="nav-logo" href="#hero">文森 <span class="zh">Vinson</span></a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#work">精选作品</a>
+      <a href="#about">关于</a>
+      <a href="#services">服务</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <button class="nav-burger" id="navBurger" aria-label="打开菜单" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- 移动端全屏菜单 -->
+<div class="menu-mobile" id="menuMobile">
+  <a href="#work">精选作品</a>
+  <a href="#about">关于</a>
+  <a href="#services">服务</a>
+  <a href="#contact">联系</a>
+  <div class="meta">插画设计 × 文创产品 · 基于杭州</div>
+</div>
+
+<!-- ============ Hero：全屏轮播，滚动时被下方白色区遮盖 ============ -->
+<section class="hero" id="hero">
+  <div class="hero-media" id="heroMedia">
+    <div class="slides">
+      <div class="slide is-active" data-slide="0">
+        <img src="assets/hero-cover.jpg" alt="个人插画作品封面——主视觉插画" width="3368" height="1896" style="object-position:center 42%">
+        <span class="slide-tag">Selected Illustration · 主视觉</span>
+      </div>
+      <div class="slide" data-slide="1">
+        <img src="assets/work-personal.jpg" alt="罗马系列插画——城市漫步的少女剪影" width="2480" height="3508">
+        <span class="slide-tag">Selected Work · 罗马系列</span>
+      </div>
+      <div class="slide" data-slide="2">
+        <img src="assets/hero-exhibit.jpg" alt="2024 杭州插画艺术展现场照片" width="4096" height="1904">
+        <span class="slide-tag">Exhibition · 2024 杭州插画艺术展</span>
+      </div>
+    </div>
+    <div class="hero-overlay">
+      <div class="hero-brand"><span class="hb-zh">文森</span><span class="hb-en">Vinson</span></div>
+      <div class="wrap">
+        <p class="hero-note fade-up">把日常，画成值得收藏的样子。<br>用插画与文创，为不肯将就的品牌和生活，<br>提供一个有温度的设计。</p>
+      </div>
+      <div class="hero-controls">
+        <span class="hero-count"><b id="slideNow">01</b><em> / 03</em></span>
+        <div class="hero-dots" id="heroDots"></div>
+        <div class="hero-btns">
+          <button class="hero-btn" id="heroPrev" aria-label="上一张"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></button>
+          <button class="hero-btn" id="heroNext" aria-label="下一张"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+      <span class="hero-scroll-hint" aria-hidden="true">scroll</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 定位句 ============ -->
+<section class="statement">
+  <div class="wrap">
+    <p><span class="reveal"><span class="reveal-inner">我相信好的设计不是把东西变好看，<br><em>而是让日常在某个瞬间被重新看见</em>。</span></span></p>
+  </div>
+</section>
+
+<!-- ============ 关于 ============ -->
+<section class="about" id="about">
+  <div class="wrap about-grid">
+    <div class="about-left">
+      <p class="kicker fade-up">About · 关于</p>
+      <div class="about-photo fade-up">
+        <img src="assets/about-photo.jpg" alt="文森个人照片">
+      </div>
+    </div>
+    <div class="body">
+      <h2 class="lead">
+        <span class="reveal"><span class="reveal-inner">我是文森，</span></span><br>
+        <span class="reveal"><span class="reveal-inner">插画设计师与文创产品创作者。</span></span>
+      </h2>
+      <p class="fade-up">我的工作从手绘开始——<strong>插画、IP 形象、包装与文创衍生品</strong>，落笔之后一路走到实物被握在手里。一只杯子、一本笔记本、一张卡片，都可能是一份心情的容器。</p>
+      <p class="fade-up">我享受从一张草图到一件产品完整落地的过程，也享受为一个品牌画下它独一无二的世界观。我叫汤文正，你也可以叫我“Vinson文森”，先后做过平面设计师、插画师、周边产品设计师，以展商身份参加过插画艺术节，每一段经历都让我更理解好的作品是如何落地的。</p>
+      <div class="about-tags fade-up">
+        <span>插画 Illustration</span><span>文创产品 Creative Goods</span><span>IP 形象 Character</span><span>包装 Packaging</span><span>品牌视觉 Brand</span>
+      </div>
+      <div class="about-edu fade-up">
+        <a class="edu-link" href="https://www.hdu.edu.cn/" target="_blank" rel="noopener" aria-label="杭州电子科技大学官网">
+          <span class="edu-logo" role="img" aria-label="杭州电子科技大学校徽"></span>
+          <span class="edu-text">
+            <span class="edu-name">杭州电子科技大学</span>
+            <span class="edu-degree">数字媒体艺术学士 · 2021-2025</span>
+          </span>
+          <span class="edu-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 精选作品（文字目录） ============ -->
+<section class="works" id="work">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">Selected works</p>
+        <h2><span class="reveal"><span class="reveal-inner">精选作品</span></span></h2>
+      </div>
+      <span class="en">Directory</span>
+    </div>
+    <div class="works-dir">
+      <div class="dir-list fade-up">
+        <a class="dir-row" href="#" data-work="artfair" data-label="参展 · 插画作品">
+          <span class="no">01</span>
+          <span class="nm">2024杭州插画艺术展</span>
+          <span class="tp">参展 · 插画作品</span>
+          <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="dir-row" href="#" data-work="zhuhun" data-label="IP形象与世界观设计">
+          <span class="no">02</span>
+          <span class="nm">“筑魂”IP项目</span>
+          <span class="tp">IP 形象与世界观设计</span>
+          <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="dir-row" href="#" data-work="gods" data-label="插画集 · 系列创作">
+          <span class="no">03</span>
+          <span class="nm">“今日有神”插画集</span>
+          <span class="tp">插画集 · 系列创作</span>
+          <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="dir-row" href="#" data-work="personal" data-label="长期创作 · 持续更新">
+          <span class="no">04</span>
+          <span class="nm">个人插画作品</span>
+          <span class="tp">长期创作 · 持续更新</span>
+          <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+      <div class="dir-preview fade-up">
+        <img src="assets/hero-main.jpg" alt="作品预览" id="dirPreviewImg">
+        <span class="dir-preview-label" id="dirPreviewLabel">参展 · 插画作品</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 服务 ============ -->
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="kicker">What I do</p>
+        <h2><span class="reveal"><span class="reveal-inner">服务</span></span></h2>
+      </div>
+      <span class="en">01 — 02</span>
+    </div>
+    <div class="svc-list">
+      <div class="svc-row fade-up" data-sv="illustration"><span class="no">01</span><span class="nm">插画创作</span><span class="ds">出版物、海报、品牌插画与艺术委托</span></div>
+      <div class="svc-row fade-up" data-sv="merchandise"><span class="no">02</span><span class="nm">衍生品开发</span><span class="ds">工艺对接、打样跟进与量产支持</span></div>
+    </div>
+    <button class="svc-cta fade-up" id="openContact" type="button">我们聊聊吧</button>
+  </div>
+</section>
+
+<!-- ============ 联系 ============ -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <p class="kicker fade-up">Contact</p>
+    <h2 class="big"><span class="reveal"><span class="reveal-inner">一起，做点<em>值得收藏</em>的东西。</span></span></h2>
+    <a class="contact-mail copy-mail fade-up" href="mailto:3428768415@qq.com">3428768415@qq.com</a>
+    <div class="contact-social fade-up">
+      <a href="https://xhslink.cn/o/Ah0uFfwM6Ey" target="_blank" rel="noopener">小红书</a>
+      <a href="https://www.zcool.com.cn/u/ZOTkzNDUwNzY=" target="_blank" rel="noopener">站酷</a>
+      <a href="#" class="social-inert">Instagram</a>
+      <a href="#" class="social-inert">Behance</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 页脚 ============ -->
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>© <span id="year">2026</span> 文森 Vinson · 插画设计 × 文创产品</span>
+    <a class="top" href="#hero">回到顶部</a>
+  </div>
+</footer>
+
+<!-- ============ 作品详情层（二级页面） ============ -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="作品详情" tabindex="-1">
+  <!-- 二级页面顶部导航（与首页导航同步） -->
+  <header class="ov-nav">
+    <div class="wrap ov-nav-inner">
+      <a class="nav-logo" href="#hero" data-ov-link="hero">文森 <span class="zh">Vinson</span></a>
+      <nav class="nav-links" aria-label="二级页导航">
+        <a href="#work" data-ov-link="work">精选作品</a>
+        <a href="#about" data-ov-link="about">关于</a>
+        <a href="#services" data-ov-link="services">服务</a>
+        <a href="#contact" data-ov-link="contact">联系</a>
+      </nav>
+      <button class="ov-close" id="ovClose" aria-label="关闭详情"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+  </header>
+  <!-- 项目详情图：静态 src 供 JS 引用 -->
+  <div class="ov-srcs" aria-hidden="true" style="display:none">
+    <img data-work-img="artfair" src="assets/work-artfair.jpg" alt="">
+    <img data-work-img="zhuhun" src="assets/work-zhuhun.jpg" alt="">
+    <img data-work-img="gods" src="assets/work-gods.jpg" alt="">
+    <img data-work-img="personal" src="assets/work-personal.jpg" alt="">
+  </div>
+  <div class="ov-stage" id="ovStage">
+  <div class="ov-inner">
+    <div class="ov-head">
+      <span class="k" id="ovKicker">Selected work</span>
+      <h2 id="ovTitle"></h2>
+      <div class="row"><span id="ovCategory"></span><span id="ovYear"></span></div>
+    </div>
+    <div class="ov-img"><img id="ovImg" src="" alt=""></div>
+    <div class="ov-body">
+      <div class="desc" id="ovDesc"></div>
+      <div class="ov-side" id="ovSide"></div>
+    </div>
+  </div>
+  <!-- 下一部作品：带白边的全屏图片，滚动读满进度条或点击进入 -->
+  <div class="next-work" id="nextWork" role="button" tabindex="0" aria-label="进入下一部作品">
+    <div class="next-frame"><img class="next-img" id="nextImg" src="assets/work-yue.jpg" alt=""></div>
+    <div class="next-body">
+      <h3 id="nextTitle">下一部作品</h3>
+      <p class="next-go">进入下一部作品</p>
+      <div class="next-bar" aria-hidden="true"><i id="nextBarFill"></i></div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"><span class="cursor-label">查看</span></div>
+
+<!-- 深色联系页 -->
+<div class="contact-view" id="contactView" role="dialog" aria-modal="true" aria-label="联系文森" tabindex="-1">
+  <button class="cv-close" id="cvClose" aria-label="关闭" onclick="document.getElementById('contactView').classList.remove('open');document.body.style.overflow=''">关闭 ×</button>
+  <div class="cv-inner">
+    <div class="cv-hero">
+      <div class="cv-left">
+        <p class="cv-kicker">Contact · 联系</p>
+        <h2 class="cv-title">我们聊聊吧<em>Let's talk</em></h2>
+        <p class="cv-sub">插画委托、IP 形象、包装与文创衍生品开发，或是任何有趣的想法——留下你的信息，我会尽快回复你。</p>
+        <p class="cv-mail">或直接写信：<a class="copy-mail" href="mailto:3428768415@qq.com">3428768415@qq.com</a></p>
+      </div>
+      <div class="cv-right">
+        <form class="cv-form" id="cvForm" novalidate>
+          <div class="cv-row">
+            <div class="cv-field">
+              <label for="cvName">您的姓名</label>
+              <input id="cvName" name="name" type="text" required>
+            </div>
+            <div class="cv-field">
+              <label for="cvEmail">您的邮箱</label>
+              <input id="cvEmail" name="email" type="email" required>
+            </div>
+          </div>
+          <div class="cv-field">
+            <label for="cvCompany">公司名称</label>
+            <input id="cvCompany" name="company" type="text">
+          </div>
+          <div class="cv-field">
+            <label>咨询类别</label>
+            <div class="cv-options" id="cvOpts">
+              <button type="button" class="cv-opt is-on" data-val="插画创作">插画创作</button>
+              <button type="button" class="cv-opt" data-val="衍生品开发">衍生品开发</button>
+            </div>
+          </div>
+          <div class="cv-field">
+            <label for="cvMsg">您想聊点什么</label>
+            <textarea id="cvMsg" name="message" rows="5" required></textarea>
+          </div>
+          <button class="cv-send" type="submit">发送留言</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="cv-bottom" id="cvBottom">
+    <div class="wrap">
+      <p class="kicker">Contact</p>
+      <h2 class="big">一起，做点<em>值得收藏</em>的东西。</h2>
+      <a class="contact-mail copy-mail" href="mailto:3428768415@qq.com">3428768415@qq.com</a>
+      <div class="contact-social">
+        <a href="https://xhslink.cn/o/Ah0uFfwM6Ey" target="_blank" rel="noopener">小红书</a>
+        <a href="https://www.zcool.com.cn/u/ZOTkzNDUwNzY=" target="_blank" rel="noopener">站酷</a>
+        <a href="#" class="social-inert">Instagram</a>
+        <a href="#" class="social-inert">Behance</a>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <span>© 2026 文森 Vinson · 插画设计 × 文创产品</span>
+        <button class="top" id="cvTop" type="button">回到顶部</button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- 服务二级页（白色：顶部固定导航 + 创作流程介绍 + 配图位置 + 底部） -->
+<div class="svc-view" id="servicesView" role="dialog" aria-modal="true" aria-label="服务与创作流程" tabindex="-1">
+  <header class="sv-nav">
+    <div class="wrap sv-nav-inner">
+      <a class="nav-logo" href="#" data-sv-link="close">文森 <span class="zh">Vinson</span></a>
+      <nav class="nav-links" aria-label="服务页导航">
+        <a href="#" data-sv-link="work">精选作品</a>
+        <a href="#" data-sv-link="about">关于</a>
+        <a href="#" data-sv-link="services">服务</a>
+        <a href="#" data-sv-link="contact">联系</a>
+      </nav>
+      <button class="sv-close" id="svClose" aria-label="关闭服务"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+  </header>
+  <div class="sv-inner">
+    <div class="sv-grid" id="svGridIllus">
+      <div class="sv-col">
+        <div class="sv-head">
+          <p class="sv-kicker">What I do · Illustration</p>
+          <h2 class="sv-title">插画创作</h2>
+          <p class="sv-sub">出版物、海报、品牌插画与艺术委托——从方向确认到绘制落地，一条清晰的路径。</p>
+        </div>
+        <div class="sv-flow">
+          <h3 class="sv-flow-title">创作流程 <em>Workflow</em></h3>
+          <div class="sv-steps">
+            <div class="sv-step"><span class="no">01</span><div><h3>倾听与理解 <em>Brief</em></h3><p>明确插画的主题、用途与风格期待，确认委托方向与交付边界。</p></div></div>
+            <div class="sv-step"><span class="no">02</span><div><h3>概念与草图 <em>Concept</em></h3><p>围绕主题产出方向草图与色彩方案，与你确认画面气质与走向。</p></div></div>
+            <div class="sv-step"><span class="no">03</span><div><h3>深化与绘制 <em>Refine</em></h3><p>锁定方向后精细绘制，逐层打磨细节、配色与构图，直至定稿。</p></div></div>
+            <div class="sv-step"><span class="no">04</span><div><h3>交付与授权 <em>Deliver</em></h3><p>按约定格式交付高清文件，说明使用范围与授权事项。</p></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sv-visual">
+        <div class="sv-visual-item has-img"><img src="assets/sv-illus-1.jpg" alt="插画创作作品 01"></div>
+        <div class="sv-visual-item has-img"><img src="assets/sv-illus-2.jpg" alt="插画创作作品 02" style="object-position:center 64%"></div>
+        <div class="sv-visual-item has-img"><img src="assets/sv-illus-3.jpg" alt="插画创作作品 03" style="object-position:center 64%"></div>
+        <div class="sv-visual-item has-img"><img src="assets/sv-illus-4.jpg" alt="插画创作作品 04" style="object-position:center 40%"></div>
+      </div>
+    </div>
+    <div class="sv-grid" id="svGridMerch" hidden>
+      <div class="sv-col">
+        <div class="sv-head">
+          <p class="sv-kicker">What I do · Merchandise</p>
+          <h2 class="sv-title">衍生品开发</h2>
+          <p class="sv-sub">把插画与 IP 落到可以被使用的产品上——工艺对接、打样跟进与量产支持。</p>
+        </div>
+        <div class="sv-flow">
+          <h3 class="sv-flow-title">开发流程 <em>Workflow</em></h3>
+          <div class="sv-steps">
+            <div class="sv-step"><span class="no">01</span><div><h3>需求梳理 <em>Brief</em></h3><p>明确产品形态、目标预算与量产规划，判断插画落地的载体与工艺。</p></div></div>
+            <div class="sv-step"><span class="no">02</span><div><h3>概念设计 <em>Concept</em></h3><p>把插画或 IP 适配到具体载体上，设计图案、配色与位置关系。</p></div></div>
+            <div class="sv-step"><span class="no">03</span><div><h3>工艺打样 <em>Sample</em></h3><p>对接材质与工艺，跟进打样并确认颜色、细节与手感。</p></div></div>
+            <div class="sv-step"><span class="no">04</span><div><h3>量产跟进 <em>Production</em></h3><p>对接生产与质检，跟进批量制作直至成品交付。</p></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sv-visual">
+        <div class="sv-visual-item has-img"><img src="assets/sv-merch-1.jpg" alt="衍生品开发草图过程"></div>
+        <div class="sv-visual-item has-img"><img src="assets/sv-merch-2.jpg" alt="衍生品开发作品图"></div>
+        <div class="sv-visual-item has-img"><img src="assets/sv-merch-3.jpg" alt="衍生品开发作品图"></div>
+        <div class="sv-visual-item has-img"><img src="assets/sv-merch-4.jpg" alt="衍生品开发作品图"></div>
+      </div>
+    </div>
+  </div>
+  <div class="sv-cta-wrap">
+    <button class="svc-cta" id="svOpenContact" type="button">我们聊聊吧</button>
+  </div>
+  <div class="cv-bottom">
+    <div class="wrap">
+      <p class="kicker">Contact</p>
+      <h2 class="big">一起，做点<em>值得收藏</em>的东西。</h2>
+      <a class="contact-mail copy-mail" href="mailto:3428768415@qq.com">3428768415@qq.com</a>
+      <div class="contact-social">
+        <a href="https://xhslink.cn/o/Ah0uFfwM6Ey" target="_blank" rel="noopener">小红书</a>
+        <a href="https://www.zcool.com.cn/u/ZOTkzNDUwNzY=" target="_blank" rel="noopener">站酷</a>
+        <a href="#" class="social-inert">Instagram</a>
+        <a href="#" class="social-inert">Behance</a>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <span>© 2026 文森 Vinson · 插画设计 × 文创产品</span>
+        <button class="top" id="svTop" type="button">回到顶部</button>
+      </div>
+    </footer>
+  </div>
+</div>
+<!-- 复制邮箱提示 -->
+<div class="copy-tip" id="copyTip" role="status" aria-live="polite">✓已复制</div>
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var isTouch = window.matchMedia("(pointer: coarse)").matches;
+
+  var burger = document.getElementById("navBurger");
+  var menuMobile = document.getElementById("menuMobile");
+  var overlay = document.getElementById("overlay");
+  var ovClose = document.getElementById("ovClose");
+  var ovKicker = document.getElementById("ovKicker");
+  var ovTitle = document.getElementById("ovTitle");
+  var ovCategory = document.getElementById("ovCategory");
+  var ovYear = document.getElementById("ovYear");
+  var ovImg = document.getElementById("ovImg");
+  var ovDesc = document.getElementById("ovDesc");
+  var ovSide = document.getElementById("ovSide");
+  var nextWork = document.getElementById("nextWork");
+  var nextImg = document.getElementById("nextImg");
+  var nextTitle = document.getElementById("nextTitle");
+  var nextBarFill = document.getElementById("nextBarFill");
+  var ovStage = document.getElementById("ovStage");
+  var toast = document.getElementById("toast");
+  var dot = document.getElementById("cursorDot");
+  var curKey = null;
+  var nextProgress = 0;
+  var workOrder = ["artfair", "zhuhun", "gods", "personal"];
+  function nextKeyOf(key){ var i = workOrder.indexOf(key); return workOrder[(i + 1) % workOrder.length]; }
+  function resetNext(){
+    nextProgress = 0;
+    if (nextBarFill) nextBarFill.style.width = "0%";
+    if (nextImg) nextImg.style.transform = "scale(1)";          /* 图片还原 */
+  }
+  /* 切换后把作品标题区垂直居中于视口 */
+  function centerWork(smooth){
+    var head = document.querySelector(".ov-head");
+    if (!head) return;
+    var o = overlay.getBoundingClientRect();
+    var h = head.getBoundingClientRect();
+    var target = overlay.scrollTop + (h.top - o.top) - (o.height - h.height) / 2;
+    target = Math.max(0, Math.min(target, overlay.scrollHeight - overlay.clientHeight));
+    if (smooth && !reduce) overlay.scrollTo({ top: target, behavior: "smooth" });
+    else overlay.scrollTop = target;
+  }
+
+  /* ===== 原生平滑滚动（锚点） ===== */
+  function smoothScrollTo(targetY, duration, onDone){
+    duration = duration || 900;
+    var startY = window.pageYOffset;
+    var diff = targetY - startY;
+    if (Math.abs(diff) < 2){ if (onDone) onDone(); return; }
+    var t0 = performance.now();
+    function ease(t){ return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+    function step(now){
+      var p = Math.min(1, (now - t0) / duration);
+      window.scrollTo(0, startY + diff * ease(p));
+      if (p < 1) requestAnimationFrame(step);
+      else if (onDone) onDone();
+    }
+    requestAnimationFrame(step);
+  }
+  function scrollToTarget(target){
+    var el = typeof target === "string" ? document.querySelector(target) : target;
+    if (!el) return;
+    var y = el.getBoundingClientRect().top + window.pageYOffset;
+    if (reduce) { window.scrollTo(0, y); if (driveHome) driveHome.resetBase(); return; }
+    smoothScrollTo(y, 900, function(){ if (driveHome) driveHome.resetBase(); });
+  }
+  function closeMenu(){
+    burger.classList.remove("open");
+    menuMobile.classList.remove("open");
+    burger.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener("click", function(e){
+      if (a.closest(".ov-nav")) return;
+      if (a.classList.contains("top")) return;   /* 回到顶部按钮单独处理 */
+      var id = a.getAttribute("href");
+      if (!id || id.length < 2) return;
+      var el = document.querySelector(id);
+      if (!el) return;
+      e.preventDefault();
+      if (menuMobile.classList.contains("open")) closeMenu();
+      if (driveHome){ driveHome.stop(); driveHome.resetBase(); }  /* 停止残留滚动动画，避免与锚点滚动竞争 */
+      scrollToTarget(el);
+    });
+  });
+  /* 回到顶部：按下后界面向上缓动回到顶部（1 秒，滚动与停止都带缓动） */
+  var topBtn = document.querySelector(".top");
+  if (topBtn) topBtn.addEventListener("click", function(e){
+    e.preventDefault();
+    if (reduce) { window.scrollTo(0, 0); return; }
+    driveHome.goTo(0, 1000);
+  });
+
+  /* ===== 滚动揭示（IntersectionObserver，离开视口重置，回到视口重播） ===== */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      en.target.classList.toggle("in-view", en.isIntersecting);
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -6% 0px" });
+  document.querySelectorAll(".reveal, .fade-up").forEach(function(el){ io.observe(el); });
+
+  /* ===== Hero 加载动效 ===== */
+  /* 标题行走与 fade-up 元素由 IntersectionObserver + CSS transition 完成（首屏立即触发） */
+
+  /* ===== 导航：滚动后从顶部滑入 ===== */
+  var navBar = document.getElementById("nav");
+  function syncNav(){
+    navBar.classList.toggle("is-visible", window.scrollY > window.innerHeight * 0.5);
+  }
+  window.addEventListener("scroll", syncNav, { passive: true });
+  syncNav();
+
+  /* ===== Hero 三图轮播 ===== */
+  var heroMedia = document.getElementById("heroMedia");
+  var slides = document.querySelectorAll(".slide");
+  var dotsWrap = document.getElementById("heroDots");
+  var slideNow = document.getElementById("slideNow");
+  var slideIdx = 0;
+  var slideTimer = null;
+  if (dotsWrap) {
+    slides.forEach(function(s, k){
+      var d = document.createElement("span");
+      if (k === 0) d.classList.add("is-active");
+      d.setAttribute("role", "button");
+      d.setAttribute("aria-label", "第 " + (k + 1) + " 张");
+      d.addEventListener("click", function(){ showSlide(k); resetSlideTimer(); });
+      dotsWrap.appendChild(d);
+    });
+  }
+  function showSlide(i, dir){
+    var len = slides.length;
+    var from = slides[slideIdx];
+    var toIdx = ((i % len) + len) % len;
+    if (toIdx === slideIdx) return;
+    var to = slides[toIdx];
+    to.style.transition = "none";                                          /* 新图预置透明（交叉淡化，页面文字层不动） */
+    to.style.opacity = 0;
+    void to.offsetWidth;
+    to.style.transition = "";
+    from.style.opacity = 0;                                                /* 旧图平滑淡出 */
+    to.style.opacity = 1;                                                  /* 新图平滑淡入，交叉过渡约 1.5s */
+    slideIdx = toIdx;
+    slides.forEach(function(s, k){ s.classList.toggle("is-active", k === slideIdx); });
+    if (slideNow) slideNow.textContent = "0" + (slideIdx + 1);
+    var dots = dotsWrap ? dotsWrap.children : [];
+    for (var di = 0; di < dots.length; di++) dots[di].classList.toggle("is-active", di === slideIdx);
+  }
+  function resetSlideTimer(){                                /* 手动切换后自动轮播重新计时 */
+    if (slideTimer) clearInterval(slideTimer);
+    if (!reduce && slides.length > 1) slideTimer = setInterval(function(){ showSlide(slideIdx + 1, 1); }, 5000);
+  }
+  document.getElementById("heroNext").addEventListener("click", function(){ showSlide(slideIdx + 1, 1); resetSlideTimer(); });
+  document.getElementById("heroPrev").addEventListener("click", function(){ showSlide(slideIdx - 1, -1); resetSlideTimer(); });
+  resetSlideTimer();
+  if (slides.length > 1) {
+    var touchX = null;
+    heroMedia.addEventListener("touchstart", function(e){ touchX = e.touches[0].clientX; }, { passive: true });
+    heroMedia.addEventListener("touchend", function(e){
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 40) { dx < 0 ? showSlide(slideIdx + 1, 1) : showSlide(slideIdx - 1, -1); resetSlideTimer(); }
+      touchX = null;
+    }, { passive: true });
+  }
+
+  /* ===== 自定义光标 ===== */
+  var cursorX = -1, cursorY = -1;
+  /* 自定义光标模式下 CSS :hover 由 body:not(.has-cursor) 禁用，hover 效果完全由 .js-hover 实时接管；
+     顶层定义，供首页/二级页/联系页滚动时同步调用 */
+  function syncHover(){
+    if (cursorX < 0 || cursorY < 0) return;
+    var el = document.elementFromPoint(cursorX, cursorY);
+    var hit = el && el.closest ? el.closest("a, button, .svc-row, .dir-row, .sv-visual-item") : null;
+    document.querySelectorAll(".js-hover").forEach(function(n){ if (n !== hit) n.classList.remove("js-hover"); });
+    if (hit) hit.classList.add("js-hover");
+    if (dot){
+      var dirHit = el && el.closest ? el.closest(".dir-row") : null;
+      if (dirHit){ dot.classList.add("is-big"); activateRowPreview(dirHit); }   /* 滚动经过目录时同步切换右侧预览 */
+      else dot.classList.remove("is-big");
+      if (dirPreviewLabel){                                    /* 角标：光标在目录上时出现，离开隐藏 */
+        if (dirHit) dirPreviewLabel.classList.add("show");
+        else dirPreviewLabel.classList.remove("show");
+      }
+    }
+  }
+  window.addEventListener("scroll", syncHover, { passive: true });
+  if (!isTouch && !reduce) {
+    document.body.classList.add("has-cursor");
+    window.addEventListener("mousemove", function(e){
+      cursorX = e.clientX; cursorY = e.clientY;
+      dot.style.setProperty("--cx", e.clientX + "px");
+      dot.style.setProperty("--cy", e.clientY + "px");
+      if (!dot.classList.contains("on")) dot.classList.add("on");
+      syncHover();
+    });
+  }
+    document.querySelectorAll(".dir-row").forEach(function(c){
+      c.addEventListener("mouseenter", function(){ dot.classList.add("is-big"); });
+      c.addEventListener("mouseleave", function(){ dot.classList.remove("is-big"); });
+    });
+    /* 关于栏照片：鼠标在页面任意位置移动时，照片持续跟随光标整体移动 + 微微 3D 转向；
+       滚动页面时同样按鼠标位置持续更新姿态 */
+    var ap = document.querySelector(".about-photo");
+    if (ap){
+      function updatePhotoTilt(e){
+        var r = ap.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        var dx = (e.clientX - cx) / r.width;
+        var dy = (e.clientY - cy) / r.height;
+        var px = Math.max(-0.6, Math.min(0.6, dx));
+        var py = Math.max(-0.6, Math.min(0.6, dy));
+        ap.style.transform = "translate(" + (px * 20).toFixed(1) + "px," + (py * 20).toFixed(1) + "px) perspective(1000px) rotateX(" + (-py * 8).toFixed(2) + "deg) rotateY(" + (px * 8).toFixed(2) + "deg)";
+      }
+      window.addEventListener("mousemove", updatePhotoTilt);
+      window.addEventListener("scroll", function(){
+        if (cursorX >= 0 && cursorY >= 0) updatePhotoTilt({ clientX: cursorX, clientY: cursorY });
+      }, { passive: true });
+    }
+
+  /* ===== 邮箱点击复制 ===== */
+  var copyTip = document.getElementById("copyTip");
+  var copyTipTimer = null;
+  function legacyCopy(t){
+    var ta = document.createElement("textarea");
+    ta.value = t;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch(e){}
+    document.body.removeChild(ta);
+  }
+  function copyMail(t){
+    var done = function(){
+      if (!copyTip) return;
+      copyTip.classList.add("show");
+      if (copyTipTimer) clearTimeout(copyTipTimer);
+      copyTipTimer = setTimeout(function(){ copyTip.classList.remove("show"); }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(done, function(){ legacyCopy(t); done(); });
+    } else { legacyCopy(t); done(); }
+  }
+  document.querySelectorAll(".copy-mail").forEach(function(a){
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      copyMail(a.getAttribute("data-copy") || a.textContent.trim());
+    });
+  });
+
+  /* 无真实主页的社交链接：保留停留动画，点击不跳转不提示 */
+  document.querySelectorAll(".contact-social a.social-inert").forEach(function(a){
+    a.addEventListener("click", function(e){ e.preventDefault(); });
+  });
+
+  /* ===== 移动端菜单 ===== */
+  burger.addEventListener("click", function(){
+    var open = menuMobile.classList.toggle("open");
+    burger.classList.toggle("open", open);
+    burger.setAttribute("aria-expanded", open ? "true" : "false");
+    document.body.style.overflow = open ? "hidden" : "";
+  });
+
+  /* ===== 作品详情 overlay ===== */
+  var WORKS = {
+    artfair: {
+      title: "2024杭州插画艺术展", kicker: "参展 · 插画作品", cat: "艺术展参展", year: "2024",
+      alt: "2024杭州插画艺术展——参展插画主视觉（占位配图）",
+      desc: "<p>以个人系列插画作品参展<strong>2024杭州插画艺术展</strong>，在展位呈现从草图到成稿的完整创作脉络。</p><p><i>（文案与配图为占位示例，请替换为你的真实参展信息）</i></p>",
+      side: [["类型", "艺术展 · 参展"], ["年份", "2024"], ["状态", "已结束"]]
+    },
+    zhuhun: {
+      title: "“筑魂”IP项目", kicker: "IP 形象与世界观设计 · Character & World", cat: "IP 项目", year: "2025",
+      alt: "筑魂 IP 项目——角色形象（占位配图）",
+      desc: "<p><strong>“筑魂”</strong>IP 项目：为一个原创角色搭建完整的形象、性格与世界观，并延展至表情、贴纸与周边。</p><p><i>（文案与配图为占位示例，请替换为你的真实项目介绍）</i></p>",
+      side: [["类型", "IP 形象 · 世界观"], ["阶段", "开发中"], ["可合作", "委托 · 授权"]]
+    },
+    gods: {
+      title: "“今日有神”插画集", kicker: "插画集 · 系列创作", cat: "插画集", year: "2025",
+      alt: "今日有神插画集——系列插画（占位配图）",
+      desc: "<p><strong>《今日有神》</strong>插画集：以“神在今日日常中”为线索的一组系列创作，把神话感放进当代生活的角落。</p><p><i>（文案与配图为占位示例，请替换为你的真实作品信息）</i></p>",
+      side: [["类型", "插画集 · 系列"], ["媒介", "数字绘画"], ["状态", "整理中"]]
+    },
+    personal: {
+      title: "个人插画作品", kicker: "长期创作 · Illustration", cat: "个人创作", year: "至今",
+      alt: "个人插画作品——城市漫游系列（占位配图）",
+      desc: "<p>持续更新的个人插画创作：城市、山海、日常与想象。</p><p><i>（文案与配图为占位示例，请替换为你的真实作品集）</i></p>",
+      side: [["类型", "个人创作"], ["时间", "持续更新"], ["平台", "待补充"]]
+    }
+  };
+
+  function workImgSrc(key){
+    var el = document.querySelector('.ov-srcs img[data-work-img="' + key + '"]');
+    return el ? el.getAttribute("src") : "";
+  }
+  function openWork(key){
+    var w = WORKS[key];
+    if (!w) return;
+    curKey = key;
+    ovKicker.textContent = w.kicker;
+    ovTitle.textContent = w.title;
+    ovCategory.textContent = w.cat;
+    ovYear.textContent = w.year;
+    ovImg.src = workImgSrc(key);
+    ovImg.style.aspectRatio = COVER_RATIOS[key] ? String(COVER_RATIOS[key]) : "";   /* 竖版封面：按原图比例适配，完整显示且无留白底色 */
+    ovImg.alt = w.alt;
+    ovDesc.innerHTML = w.desc;
+    ovSide.innerHTML = w.side.map(function(s){ return '<div class="item"><span>' + s[0] + '</span><b>' + s[1] + '</b></div>'; }).join("");
+    var nk = nextKeyOf(key);
+    nextImg.src = workImgSrc(nk);
+    nextImg.style.objectFit = "";   /* 下一部作品为全屏背景，统一 cover */
+    nextImg.alt = WORKS[nk].alt;
+    nextTitle.textContent = WORKS[nk].title;
+    resetNext();
+    if (driveOverlay) driveOverlay.stop();          /* 停止残留滚动动画，避免切页被拽回旧位置 */
+    if (driveHome) driveHome.stop();
+    overlay.scrollTop = 0;                         /* 先归零再重置基准，避免基准读到旧页位置导致滚一格跳到底部 */
+    if (driveOverlay) driveOverlay.resetBase();    /* 开页回到顶部后重置滚动基准 */
+    ovNav.classList.add("is-show");
+    document.body.style.overflow = "hidden";
+    overlay.classList.add("open");
+    setTimeout(function(){ overlay.focus(); }, 60);
+  }
+  function closeWork(){
+    overlay.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+  /* ===== 文字目录：hover 预览（跟随行下移）+ 点击详情 ===== */
+  var dirPreviewImg = document.getElementById("dirPreviewImg");
+  var dirPreviewLabel = document.getElementById("dirPreviewLabel");
+  var dirList = document.querySelector(".dir-list");
+  var dirPreviewBox = document.querySelector(".dir-preview");
+  var activeDirRow = null;
+  var COVER_RATIOS = { gods: 0.6839, zhuhun: 0.7066, artfair: 0.75 };   /* 竖版封面：高度固定 340px、宽度按原图比例换算，完整显示无留白底色 */
+  function activateRowPreview(row){
+    if (row === activeDirRow) return;             /* 同一行不重复切换 */
+    activeDirRow = row;
+    if (dirPreviewImg) {                                       /* 直接替换，无淡入 */
+      var pKey = row.getAttribute("data-work");
+      dirPreviewImg.src = workImgSrc(pKey);
+      dirPreviewImg.style.objectFit = "";
+      var r = COVER_RATIOS[pKey];
+      if (r) {                                                   /* 竖版封面：保持现在的高度，宽度 = 高度 × 原图比例 */
+        dirPreviewBox.style.aspectRatio = "auto";
+        dirPreviewBox.style.maxHeight = "";
+        dirPreviewBox.style.width = Math.round(340 * r) + "px";
+        dirPreviewBox.style.height = "340px";
+      } else {                                                   /* 其余作品：恢复 4/5 框 */
+        dirPreviewBox.style.aspectRatio = "";
+        dirPreviewBox.style.maxHeight = "340px";
+        dirPreviewBox.style.width = "";
+        dirPreviewBox.style.height = "";
+      }
+    }
+    if (dirPreviewLabel) dirPreviewLabel.textContent = row.getAttribute("data-label");
+    movePreview(row);
+  }
+  function movePreview(row){
+    if (!dirPreviewBox || !dirList) return;
+    var rows = dirList.querySelectorAll(".dir-row");
+    if (!rows.length) return;
+    var maxY = dirList.offsetHeight - dirPreviewBox.offsetHeight + 88;   /* 每步移动距离更大，最低位置落在下方留白内 */
+    var idx = Array.prototype.indexOf.call(rows, row);
+    var y = rows.length > 1 ? maxY * idx / (rows.length - 1) : 0;  /* 所有图片下移路程均分 */
+    if (y < 0) y = 0;
+    dirPreviewBox.style.transform = "translateY(" + y + "px)";
+  }
+  document.querySelectorAll(".dir-row").forEach(function(r){
+    r.addEventListener("mouseenter", function(){ activateRowPreview(this); });
+    r.addEventListener("click", function(e){
+      e.preventDefault();
+      openWork(r.getAttribute("data-work"));
+    });
+  });
+  activateRowPreview(document.querySelector(".dir-row"));   /* 初始按首个作品（插画展）以原图比例适配预览 */
+  ovClose.addEventListener("click", closeWork);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeWork(); });
+  overlay.addEventListener("click", function(e){ if (e.target === overlay) closeWork(); });
+
+  /* ===== 滚动缓动驱动：滚轮输入延迟一点启动，滑行超调尾段逐渐缓慢停下（边界不越界） ===== */
+  function scrollDriver(isWindow, el){
+    el = el || overlay;
+    var target = isWindow ? window.pageYOffset : el.scrollTop;
+    var goal = target, running = false, pendingTimer = null;
+    var lastDrivenPos = target;              /* 驱动最近一次写入的位置，用于识别外部手动滚动 */
+    function getPos(){ return isWindow ? window.pageYOffset : el.scrollTop; }
+    function setPos(v){ lastDrivenPos = v; if (isWindow) window.scrollTo(0, v); else el.scrollTop = v; }
+    function maxPos(){
+      return isWindow ? document.documentElement.scrollHeight - window.innerHeight : el.scrollHeight - el.clientHeight;
+    }
+    function tick(){
+      if (!running) return;                     /* stop 后即使有排队帧也立即停止，不再滚动 */
+      var pos = getPos();
+      var diff = goal - pos;
+      if (Math.abs(diff) < 0.001){
+        setPos(goal);                            /* 停止后补足最后一点点像素到精确目标，消除阈值卡顿感 */
+        running = false;
+        return;
+      }
+      setPos(pos + diff * 0.04);                 /* 指数缓动：速度持续降低到 0，停止无卡顿 */
+      requestAnimationFrame(tick);
+    }
+    /* 拖动右侧滚动条 / 外部跳转：立即打断驱动并重置基准，防止 tick 把位置拉回旧目标 */
+    var scrollHost = isWindow ? window : el;
+    scrollHost.addEventListener("scroll", function(){
+      if (!running) return;
+      var pos = getPos();
+      if (Math.abs(pos - lastDrivenPos) > 2){
+        running = false;
+        if (pendingTimer){ clearTimeout(pendingTimer); pendingTimer = null; }
+        target = pos; goal = pos;
+      }
+    }, { passive: true });
+    return {
+      drive: function(delta){
+        var m = maxPos();
+        var dir = delta > 0 ? 1 : -1;
+        target += delta;                         /* 累积目标：一格滚轮按原始距离滚动 */
+        if (target < 0) target = 0;
+        if (target > m) target = m;
+        goal = target + 50 * dir;              /* 滑行超调 50px，不回落到真实目标 */
+        if (goal < 0) goal = 0;
+        if (goal > m) goal = m;
+        if (running) return;                   /* 滚动中：目标已更新，tick 自动跟随 */
+        if (pendingTimer) clearTimeout(pendingTimer);
+        pendingTimer = setTimeout(function(){  /* 明显延迟后再开始滑动 */
+          pendingTimer = null;
+          running = true;
+          requestAnimationFrame(tick);
+        }, 40);
+      },
+      resetBase: function(){
+        target = getPos();                     /* 外部跳转后重置滚动基准，并立即取消旧目标，防止 tick 把页面拉回旧位置 */
+        goal = target;
+      },
+      goTo: function(pos, duration){
+        duration = duration || 900;
+        var startPos = getPos();
+        var diff = pos - startPos;
+        var t0 = performance.now();
+        target = pos;                          /* 重置基准，避免后续 drive 累积到旧目标 */
+        running = false;
+        if (pendingTimer){ clearTimeout(pendingTimer); pendingTimer = null; }
+        if (Math.abs(diff) < 2){ setPos(pos); return; }
+        running = true;
+        function step(now){
+          if (!running) return;
+          var p = Math.min(1, (now - t0) / duration);
+          var e = 1 - Math.pow(1 - p, 3);      /* easeOutCubic：先快后慢，停止时渐停 */
+          setPos(startPos + diff * e);
+          if (p < 1) requestAnimationFrame(step);
+          else running = false;
+        }
+        requestAnimationFrame(step);
+      },
+      stop: function(){
+        running = false;
+        if (pendingTimer){ clearTimeout(pendingTimer); pendingTimer = null; }
+      }
+    };
+  }
+  var driveHome = scrollDriver(true);
+  var servicesView = document.getElementById("servicesView");
+  window.addEventListener("wheel", function(e){
+    if (e.ctrlKey) return;
+    if (overlay.classList.contains("open")) return;
+    if (contactView && contactView.classList.contains("open")) return;
+    if (servicesView && servicesView.classList.contains("open")) return;
+    if (reduce) return;                          /* 减少动态效果：保持原生滚动 */
+    var d = e.deltaY;
+    if (e.deltaMode === 1) d *= 33;
+    else if (e.deltaMode === 2) d *= 100;
+    e.preventDefault();
+    driveHome.drive(d);
+  }, { passive: false });
+  var driveOverlay = scrollDriver(false);
+
+  /* ===== 下一部作品：滚到底后滚轮直接双向驱动进度 / 点击直接进入 ===== */
+  var releaseAccum = 0;   /* 清零后放行页面滚动前的吸收量，防止惯性反向直接跳页 */
+  var switchLock = 0;     /* 切页动画期间的滚轮冷却，防止惯性滚动把新页带跑 */
+  overlay.addEventListener("wheel", function(e){
+    if (!overlay.classList.contains("open")) return;
+    if (Date.now() - switchLock < 1000) return;  /* 切页后 1 秒内忽略滚轮 */
+    var raw = e.deltaY;
+    if (e.deltaMode === 1) raw *= 33;
+    else if (e.deltaMode === 2) raw *= 100;
+    var dir = raw > 0 ? 1 : -1;               /* 向下 = 增加，向上 = 倒退 */
+    var bottom = overlay.scrollHeight - overlay.scrollTop - overlay.clientHeight;
+    if (bottom >= 60){
+      if (reduce) return;                        /* 减少动态效果：原生滚动 */
+      e.preventDefault();
+      driveOverlay.drive(raw);                   /* 内容区滚动：带"多移动一点"的滑行缓动 */
+      return;
+    }
+    if (dir < 0 && nextProgress <= 0){
+      releaseAccum += Math.abs(raw);
+      if (releaseAccum < 60){ e.preventDefault(); return; }  /* 吸收反向惯性，不清零瞬间跳页 */
+      releaseAccum = 0;
+      driveOverlay.resetBase();                  /* 放行原生滚动前重置滚动基准 */
+      return;                                 /* 清零后继续向上：放行页面向上滚动 */
+    }
+    if (dir > 0) releaseAccum = 0;
+    e.preventDefault();                       /* 否则滚轮专用于进度条，无卡顿 */
+    if (dir > 0) {
+      nextProgress = Math.min(100, nextProgress + Math.abs(raw) * 0.083); /* 约 12 格读满 */
+    } else {
+      nextProgress = Math.max(0, nextProgress - Math.abs(raw) * 0.083);
+    }
+    nextBarFill.style.width = nextProgress + "%";
+    nextImg.style.transform = "scale(" + (1 + nextProgress / 100 * 0.06) + ")";  /* 读条时图片微微放大（外框不变） */
+    if (nextProgress >= 100) goNext();
+  }, { passive: false });
+  nextWork.addEventListener("click", function(){ goNext(); });
+  nextWork.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " ") goNext(); });
+  function goNext(){
+    if (!curKey) return;
+    switchLock = Date.now();                     /* 进入切页：锁定滚轮，防止惯性滚动带跑新页 */
+    var nk = nextKeyOf(curKey);
+    if (reduce) { openWork(nk); return; }
+    ovStage.classList.add("go-out");                  /* 1. 旧页后退到深处并淡出（0.65s） */
+    setTimeout(function(){
+      openWork(nk);                                  /* 切换下一作品内容 */
+      ovStage.classList.remove("go-out");
+      ovStage.classList.add("in-deep");              /* 2. 新页从更深的层就位 */
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          ovStage.classList.remove("in-deep");
+          ovStage.classList.add("go-in");            /* 3. 新页从深处浮起前进到全屏（0.65s） */
+          setTimeout(function(){
+            ovStage.classList.remove("go-in");       /* 定格全屏，新页停在页面顶部 */
+          }, 680);
+        });
+      });
+    }, 660);
+  }
+
+  /* ===== 二级页顶部导航：滚动到底部时向上收起，向上翻时重新出现 ===== */
+  var ovNav = document.querySelector(".ov-nav");
+  overlay.addEventListener("scroll", function(){
+    syncHover();
+    var bottom = overlay.scrollHeight - overlay.scrollTop - overlay.clientHeight;
+    ovNav.classList.toggle("is-show", bottom >= 60);
+  });
+
+  /* ===== 二级页顶部导航：点击回到首页对应区块 ===== */
+  document.querySelectorAll(".ov-nav a[data-ov-link]").forEach(function(a){
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      closeWork();
+      var id = a.getAttribute("href");
+      if (id && id.length > 1) {
+        var el = document.querySelector(id);
+        if (el) setTimeout(function(){ scrollToTarget(el); }, 80);
+      }
+    });
+  });
+
+  /* ===== 占位链接 toast ===== */
+  var toastTimer;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove("show"); }, 2600);
+  }
+  document.querySelectorAll("[data-toast]").forEach(function(a){
+    a.addEventListener("click", function(e){ e.preventDefault(); showToast("占位链接，替换为你的真实主页即可"); });
+  });
+
+  /* ===== 年份 ===== */
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  /* ===== 深色联系页 ===== */
+  var contactView = document.getElementById("contactView");
+  var openContact = document.getElementById("openContact");
+  var cvClose = document.getElementById("cvClose");
+  var cvForm = document.getElementById("cvForm");
+  var driveCv = null;
+  function openCv(){
+    contactView.classList.add("open");
+    document.body.style.overflow = "hidden";
+    if (!driveCv) driveCv = scrollDriver(false, contactView);
+    driveCv.stop(); driveCv.resetBase();
+    var d = document.getElementById("cursorDot");
+    if (d) d.classList.add("on-dark");
+    syncCursorDark();
+    var f = document.getElementById("cvName");
+    if (f) setTimeout(function(){ f.focus(); }, 450);
+  }
+  function closeCv(){
+    contactView.classList.remove("open");
+    document.body.style.overflow = "";
+    if (driveCv) driveCv.stop();
+    var d = document.getElementById("cursorDot");
+    if (d) d.classList.remove("on-dark");
+  }
+  /* 滚动时同步光标深浅：滚轮滑动页面时光标未移动、mouseenter 不触发，
+     需按鼠标当前所在位置判断是否在浅色区并同步颜色 */
+  function syncCursorDark(){
+    var d = document.getElementById("cursorDot");
+    if (!d) return;
+    if (cursorX < 0 || cursorY < 0) return;
+    var el = document.elementFromPoint(cursorX, cursorY);
+    var inLight = el && el.closest && el.closest(".cv-bottom");
+    if (inLight) d.classList.remove("on-dark");
+    else d.classList.add("on-dark");
+  }
+  contactView.addEventListener("scroll", function(){ syncHover(); syncCursorDark(); }, { passive: true });
+  contactView.addEventListener("wheel", function(e){
+    if (!contactView.classList.contains("open")) return;
+    if (reduce) return;                          /* 减少动态效果：保持原生滚动 */
+    var d = e.deltaY;
+    if (e.deltaMode === 1) d *= 33;
+    else if (e.deltaMode === 2) d *= 100;
+    e.preventDefault();
+    driveCv.drive(d);
+  }, { passive: false });
+  if (openContact) openContact.addEventListener("click", function(e){
+    e.preventDefault();
+    openCv();
+  });
+  if (cvClose) cvClose.addEventListener("click", closeCv);
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && contactView.classList.contains("open")) closeCv();
+  });
+  if (cvForm) cvForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = document.getElementById("cvName").value.trim();
+    var email = document.getElementById("cvEmail").value.trim();
+    var company = document.getElementById("cvCompany").value.trim();
+    var catEl = document.querySelector("#cvOpts .cv-opt.is-on");
+    var category = catEl ? catEl.getAttribute("data-val") : "插画创作";
+    var msg = document.getElementById("cvMsg").value.trim();
+    var subject = "网站留言 · " + name;
+    var body = msg + "\n\n咨询类别：" + category + "｜公司：" + company + "\n— " + name + "（" + email + "）";
+    window.location.href = "mailto:3428768415@qq.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  });
+  /* 咨询类别：可单选切换 */
+  var cvOpts = document.getElementById("cvOpts");
+  if (cvOpts){
+    cvOpts.addEventListener("click", function(e){
+      var b = e.target.closest(".cv-opt");
+      if (!b) return;
+      cvOpts.querySelectorAll(".cv-opt").forEach(function(o){ o.classList.remove("is-on"); });
+      b.classList.add("is-on");
+    });
+  }
+  /* 联系页浅色区：光标切回深色（浅色底上可见） */
+  var cvBottom = document.getElementById("cvBottom");
+  if (cvBottom){
+    cvBottom.addEventListener("mouseenter", function(){
+      var d = document.getElementById("cursorDot");
+      if (d) d.classList.remove("on-dark");
+    });
+    cvBottom.addEventListener("mouseleave", function(){
+      var d = document.getElementById("cursorDot");
+      if (d) d.classList.add("on-dark");
+    });
+  }
+  /* 联系页内「回到顶部」：带缓动滚回联系页顶部 */
+  var cvTop = document.getElementById("cvTop");
+  if (cvTop) cvTop.addEventListener("click", function(){
+    if (driveCv) driveCv.goTo(0, 1000);
+  });
+
+  /* ===== 服务二级页（白色） ===== */
+  var driveSv = null;
+  var svIllus = document.getElementById("svGridIllus");
+  var svMerch = document.getElementById("svGridMerch");
+  function openSv(key){
+    /* 按入口切换两套独立内容：插画创作 / 衍生品开发（各自左文右图） */
+    var isMerch = key === "merchandise";
+    svIllus.hidden = isMerch;
+    svMerch.hidden = !isMerch;
+    servicesView.classList.add("open");
+    document.body.style.overflow = "hidden";
+    if (!driveSv) driveSv = scrollDriver(false, servicesView);
+    driveSv.stop();
+    servicesView.scrollTop = 0;                  /* 先归零，再重置滚动基准，避免残留旧位置导致滚一格直接翻到底 */
+    driveSv.resetBase();
+  }
+  function closeSv(){
+    servicesView.classList.remove("open");
+    document.body.style.overflow = "";
+    if (driveSv) driveSv.stop();
+  }
+  servicesView.addEventListener("scroll", function(){ syncHover(); }, { passive: true });
+  servicesView.addEventListener("wheel", function(e){
+    if (!servicesView.classList.contains("open")) return;
+    if (reduce) return;                          /* 减少动态效果：保持原生滚动 */
+    var d = e.deltaY;
+    if (e.deltaMode === 1) d *= 33;
+    else if (e.deltaMode === 2) d *= 100;
+    e.preventDefault();
+    driveSv.drive(d);
+  }, { passive: false });
+  /* 服务栏两行：点击进入对应内容的服务二级页 */
+  document.querySelectorAll(".svc-row").forEach(function(r){
+    r.addEventListener("click", function(){ openSv(r.getAttribute("data-sv") || "illustration"); });
+  });
+  var svClose = document.getElementById("svClose");
+  if (svClose) svClose.addEventListener("click", closeSv);
+  /* 服务页底部「我们聊聊吧」：跳转到深色登记页 */
+  var svOpenContact = document.getElementById("svOpenContact");
+  if (svOpenContact) svOpenContact.addEventListener("click", function(){ openCv(); });
+  /* 服务页顶部导航：关闭并回到主页对应板块 */
+  document.querySelectorAll("[data-sv-link]").forEach(function(a){
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      var t = a.getAttribute("data-sv-link");
+      closeSv();
+      if (t && t !== "close") setTimeout(function(){ window.location.hash = t; }, 80);
+    });
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && servicesView.classList.contains("open")) closeSv();
+  });
+  /* 服务页内「回到顶部」：带缓动滚回服务页顶部 */
+  var svTop = document.getElementById("svTop");
+  if (svTop) svTop.addEventListener("click", function(){
+    if (driveSv) driveSv.goTo(0, 1000);
+  });
+})();
+</script>
+</body>
+</html>

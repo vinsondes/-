@@ -373,12 +373,16 @@ body:not(.has-cursor) .footer .top:hover,.footer .top.js-hover{color:var(--accen
 .section-head h2{font-family:var(--font-serif);font-weight:700;font-size:clamp(26px,3.6vw,44px);line-height:1.2}
 
 /* toast 提示 */
-.toast{
-  position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(20px);
-  background:var(--ink);color:var(--paper);font-size:13px;padding:12px 22px;border-radius:99px;
-  opacity:0;pointer-events:none;z-index:2200;transition:opacity .4s,transform .4s var(--ease);
+/* 弹窗统一样式：toast 与复制提示共用（圆角矩形 · 浅色底） */
+.copy-tip,.toast{
+  position:fixed;left:50%;top:46%;z-index:5000;
+  transform:translate(-50%,-50%) translateY(10px);
+  background:var(--paper);color:var(--ink);
+  border-radius:10px;padding:14px 32px;font-size:14px;letter-spacing:.06em;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);
+  opacity:0;pointer-events:none;transition:opacity .3s var(--ease),transform .3s var(--ease);
 }
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.copy-tip.show,.toast.show{opacity:1;transform:translate(-50%,-50%) translateY(0)}
 
 @media (prefers-reduced-motion: reduce){
   .reveal .reveal-inner{transform:none;transition:none}
@@ -505,6 +509,7 @@ body:not(.has-cursor) .cv-opt:hover,.cv-opt.js-hover{border-color:var(--accent);
   transition:background .35s var(--ease),color .35s;
 }
 body:not(.has-cursor) .cv-send:hover,.cv-send.js-hover{background:var(--accent);color:var(--paper)}
+.cv-send:disabled{opacity:.5;cursor:default}
 .cv-mail{font-size:13px;color:var(--paper);opacity:.5;margin-top:34px}
 .cv-mail a{color:var(--paper);opacity:.8;border-bottom:1px solid rgba(241,237,227,.3);padding-bottom:2px;transition:color .3s,border-color .3s}
 body:not(.has-cursor) .cv-mail a:hover,.cv-mail a.js-hover{color:var(--accent);border-color:var(--accent)}
@@ -517,16 +522,7 @@ body:not(.has-cursor) .cv-mail a:hover,.cv-mail a.js-hover{color:var(--accent);b
 body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js-hover{color:var(--accent);border-color:var(--accent)}
 .cv-bottom .contact-social{margin-top:44px}
 @media(max-width:860px){.cv-hero{grid-template-columns:1fr;gap:48px}}
-/* 复制邮箱提示 */
-.copy-tip{
-  position:fixed;left:50%;top:46%;z-index:5000;
-  transform:translate(-50%,-50%) translateY(10px);
-  background:var(--paper);color:var(--ink);
-  border-radius:10px;padding:14px 32px;font-size:14px;letter-spacing:.06em;
-  box-shadow:0 12px 40px rgba(0,0,0,.18);
-  opacity:0;pointer-events:none;transition:opacity .3s var(--ease),transform .3s var(--ease);
-}
-.copy-tip.show{opacity:1;transform:translate(-50%,-50%) translateY(0)}
+/* 复制邮箱提示（与 .toast 共用上方统一样式） */
 @media(max-width:640px){
   .cv-close{top:18px;right:18px}
   .cv-inner{padding:70px 20px 0}
@@ -928,6 +924,7 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
 </div>
 <!-- 复制邮箱提示 -->
 <div class="copy-tip" id="copyTip" role="status" aria-live="polite">✓已复制</div>
+<script src="assets/emailjs.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1503,6 +1500,8 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
   document.getElementById("year").textContent = new Date().getFullYear();
 
   /* ===== 深色联系页 ===== */
+  /* EmailJS：一键把表单信息发送到 3428768415@qq.com */
+  if (typeof emailjs !== "undefined") emailjs.init("f8jiIFfB-o_ebxKvS");
   var contactView = document.getElementById("contactView");
   var openContact = document.getElementById("openContact");
   var cvClose = document.getElementById("cvClose");
@@ -1563,9 +1562,41 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
     var catEl = document.querySelector("#cvOpts .cv-opt.is-on");
     var category = catEl ? catEl.getAttribute("data-val") : "插画创作";
     var msg = document.getElementById("cvMsg").value.trim();
-    var subject = "网站留言 · " + name;
-    var body = msg + "\n\n咨询类别：" + category + "｜公司：" + company + "\n— " + name + "（" + email + "）";
-    window.location.href = "mailto:3428768415@qq.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    if (!name || !msg){ showToast("请填写姓名和留言内容后发送"); return; }
+    var btn = cvForm.querySelector(".cv-send");
+    if (btn) btn.disabled = true;
+    var done = function(){ if (btn) btn.disabled = false; };
+    if (typeof emailjs === "undefined"){
+      done(); showToast("邮件服务未加载，请稍后重试"); return;
+    }
+    var p;
+    try {
+      /* EmailJS 一键发送：字段打包为邮件模板变量 */
+      p = emailjs.send("service_eaw0sf9", "template_lbdnibo", {
+        name: name,
+        email: email,
+        company: company,
+        category: category,
+        message: msg
+      });
+    } catch (err) {
+      done();
+      showToast("发送失败，请稍后重试或直接邮件联系 3428768415@qq.com");
+      return;
+    }
+    p.then(function(){
+      done();
+      cvForm.reset();
+      var first = document.querySelector("#cvOpts .cv-opt");
+      if (first){
+        cvOpts.querySelectorAll(".cv-opt").forEach(function(o){ o.classList.remove("is-on"); });
+        first.classList.add("is-on");
+      }
+      showToast("✓ 留言已发送，我会尽快回复您");
+    }).catch(function(){
+      done();
+      showToast("发送失败，请稍后重试，或直接邮件联系 3428768415@qq.com");
+    });
   });
   /* 咨询类别：可单选切换 */
   var cvOpts = document.getElementById("cvOpts");

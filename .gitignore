@@ -1,0 +1,5 @@
+# 自检产物与临时文件
+_shots/
+*.txt
+.DS_Store
+Thumbs.db

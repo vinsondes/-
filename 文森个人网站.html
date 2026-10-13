@@ -1199,26 +1199,26 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
   var WORKS = {
     artfair: {
       title: "2024杭州插画艺术展", kicker: "参展 · 插画作品", cat: "艺术展参展", year: "2024",
-      alt: "2024杭州插画艺术展——参展插画主视觉（占位配图）",
-      desc: "<p>以个人系列插画作品参展<strong>2024杭州插画艺术展</strong>，在展位呈现从草图到成稿的完整创作脉络。</p><p><i>（文案与配图为占位示例，请替换为你的真实参展信息）</i></p>",
+      alt: "2024杭州插画艺术展——参展插画主视觉",
+      desc: "<p>以个人系列插画作品参展<strong>2024杭州插画艺术展</strong>，在展位呈现从草图到成稿的完整创作脉络。</p>",
       side: [["类型", "艺术展 · 参展"], ["年份", "2024"], ["状态", "已结束"]]
     },
     zhuhun: {
       title: "“筑魂”IP项目", kicker: "IP 形象与世界观设计 · Character & World", cat: "IP 项目", year: "2025",
-      alt: "筑魂 IP 项目——角色形象（占位配图）",
-      desc: "<p><strong>“筑魂”</strong>IP 项目：为一个原创角色搭建完整的形象、性格与世界观，并延展至表情、贴纸与周边。</p><p><i>（文案与配图为占位示例，请替换为你的真实项目介绍）</i></p>",
+      alt: "筑魂 IP 项目——角色形象",
+      desc: "<p><strong>“筑魂”</strong>IP 项目：为一个原创角色搭建完整的形象、性格与世界观，并延展至表情、贴纸与周边。</p>",
       side: [["类型", "IP 形象 · 世界观"], ["阶段", "开发中"], ["可合作", "委托 · 授权"]]
     },
     gods: {
       title: "“今日有神”插画集", kicker: "插画集 · 系列创作", cat: "插画集", year: "2025",
-      alt: "今日有神插画集——系列插画（占位配图）",
-      desc: "<p><strong>《今日有神》</strong>插画集：以“神在今日日常中”为线索的一组系列创作，把神话感放进当代生活的角落。</p><p><i>（文案与配图为占位示例，请替换为你的真实作品信息）</i></p>",
+      alt: "今日有神插画集——系列插画",
+      desc: "<p><strong>《今日有神》</strong>插画集：以“神在今日日常中”为线索的一组系列创作，把神话感放进当代生活的角落。</p>",
       side: [["类型", "插画集 · 系列"], ["媒介", "数字绘画"], ["状态", "产品开发中"]]
     },
     personal: {
       title: "个人插画作品", kicker: "长期创作 · Illustration", cat: "个人创作", year: "至今",
-      alt: "个人插画作品——城市漫游系列（占位配图）",
-      desc: "<p>持续更新的个人插画创作：城市、山海、日常与想象。</p><p><i>（文案与配图为占位示例，请替换为你的真实作品集）</i></p>",
+      alt: "个人插画作品——城市漫游系列",
+      desc: "<p>持续更新的个人插画创作：城市、山海、日常与想象。</p>",
       side: [["类型", "个人创作"], ["时间", "持续更新"], ["平台", "小红书 · 站酷"]]
     }
   };
@@ -1489,7 +1489,7 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
     });
   });
 
-  /* ===== 占位链接 toast ===== */
+  /* ===== 提示弹窗 ===== */
   var toastTimer;
   function showToast(msg){
     toast.textContent = msg;
@@ -1497,9 +1497,6 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function(){ toast.classList.remove("show"); }, 2600);
   }
-  document.querySelectorAll("[data-toast]").forEach(function(a){
-    a.addEventListener("click", function(e){ e.preventDefault(); showToast("占位链接，替换为你的真实主页即可"); });
-  });
 
   /* ===== 年份 ===== */
   document.getElementById("year").textContent = new Date().getFullYear();

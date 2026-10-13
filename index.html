@@ -163,6 +163,9 @@ body:not(.has-cursor) .nav-links a:hover::after,.nav-links a.js-hover::after{tra
   .hero-overlay .wrap{left:14px;right:14px;bottom:32px}
   .slide-tag{top:16px;right:14px;left:auto}
   .hero-brand{top:16px;left:14px}
+  /* 移动端：第一、三张轮播图向右移动，露出图片左边部分 */
+  .slide[data-slide="0"] img{object-position:25% 42% !important}
+  .slide[data-slide="2"] img{object-position:25% center}
 }
 .hero-controls{
   position:absolute;right:24px;bottom:38px;z-index:5;display:flex;align-items:center;gap:16px;
@@ -393,8 +396,10 @@ body:not(.has-cursor) .footer .top:hover,.footer .top.js-hover{color:var(--accen
 }
 
 /* ============ 服务区「我们聊聊吧」深色按钮 ============ */
+.svc-cta-reveal{display:block;width:fit-content;margin-left:auto;margin-top:46px}
+.svc-cta-reveal .reveal-inner{transition:transform .6s var(--ease)}
 .svc-cta{
-  display:block;width:fit-content;margin-left:auto;margin-top:46px;background:var(--ink);color:var(--paper);
+  display:block;width:fit-content;background:var(--ink);color:var(--paper);
   padding:14px 34px;border-radius:8px;font-size:15px;letter-spacing:.08em;
   transition:background .35s var(--ease),color .35s;
 }
@@ -456,7 +461,7 @@ body:not(.has-cursor) .sv-visual-item:hover,.sv-visual-item.js-hover{
 @media(max-width:899px){.sv-visual{width:100%;height:480px}}
 
 .sv-cta-wrap{max-width:1180px;margin:0 auto;padding:40px 28px 0}
-.svc-view .svc-cta{margin-left:0;margin-top:0}
+.svc-view .svc-cta-reveal{margin-left:0;margin-top:0}
 .svc-view .cv-bottom{margin-top:60px}
 
 /* ============ 深色联系页（登记信息并发送消息） ============ */
@@ -694,7 +699,7 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
       <div class="svc-row fade-up" data-sv="illustration"><span class="no">01</span><span class="nm">插画创作</span><span class="ds">出版物、海报、品牌插画与艺术委托</span></div>
       <div class="svc-row fade-up" data-sv="merchandise"><span class="no">02</span><span class="nm">衍生品开发</span><span class="ds">工艺对接、打样跟进与量产支持</span></div>
     </div>
-    <button class="svc-cta fade-up" id="openContact" type="button">我们聊聊吧</button>
+    <span class="reveal svc-cta-reveal"><span class="reveal-inner"><button class="svc-cta" id="openContact" type="button">我们聊聊吧</button></span></span>
   </div>
 </section>
 
@@ -900,7 +905,7 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
     </div>
   </div>
   <div class="sv-cta-wrap">
-    <button class="svc-cta" id="svOpenContact" type="button">我们聊聊吧</button>
+    <span class="reveal svc-cta-reveal"><span class="reveal-inner"><button class="svc-cta" id="svOpenContact" type="button">我们聊聊吧</button></span></span>
   </div>
   <div class="cv-bottom">
     <div class="wrap">
@@ -1208,13 +1213,13 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
       title: "“今日有神”插画集", kicker: "插画集 · 系列创作", cat: "插画集", year: "2025",
       alt: "今日有神插画集——系列插画（占位配图）",
       desc: "<p><strong>《今日有神》</strong>插画集：以“神在今日日常中”为线索的一组系列创作，把神话感放进当代生活的角落。</p><p><i>（文案与配图为占位示例，请替换为你的真实作品信息）</i></p>",
-      side: [["类型", "插画集 · 系列"], ["媒介", "数字绘画"], ["状态", "整理中"]]
+      side: [["类型", "插画集 · 系列"], ["媒介", "数字绘画"], ["状态", "产品开发中"]]
     },
     personal: {
       title: "个人插画作品", kicker: "长期创作 · Illustration", cat: "个人创作", year: "至今",
       alt: "个人插画作品——城市漫游系列（占位配图）",
       desc: "<p>持续更新的个人插画创作：城市、山海、日常与想象。</p><p><i>（文案与配图为占位示例，请替换为你的真实作品集）</i></p>",
-      side: [["类型", "个人创作"], ["时间", "持续更新"], ["平台", "待补充"]]
+      side: [["类型", "个人创作"], ["时间", "持续更新"], ["平台", "小红书 · 站酷"]]
     }
   };
 

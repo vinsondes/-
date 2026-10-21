@@ -353,6 +353,21 @@ body:not(.has-cursor) .svc-row:hover .nm,.svc-row.hover .nm,.svc-row.js-hover .n
   font-size:clamp(34px,6vw,76px);margin-bottom:18px;
 }
 .contact .big em{font-style:italic;color:var(--accent);margin-right:10px}
+/* 联系区标题行：右侧「进入线上展厅」交互按钮 */
+.title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:28px}
+.title-row .big{flex:1 1 auto;min-width:0}
+.gallery-entry{
+  flex-shrink:0;display:inline-block;white-space:nowrap;
+  font-size:23px;letter-spacing:.06em;color:var(--ink);
+  padding-bottom:8px;border-bottom:1px solid var(--line-strong);
+  transition:color .35s var(--ease),transform .5s var(--ease);
+}
+body:not(.has-cursor) .gallery-entry:hover,.gallery-entry.js-hover{
+  color:var(--accent);transform:scale(1.14) rotate(2.2deg);
+}
+@media(max-width:640px){
+  .title-row{flex-direction:column;align-items:flex-start;gap:16px}
+}
 .contact-mail{
   display:inline-block;font-family:var(--font-latin);font-style:italic;
   font-size:clamp(22px,4vw,44px);color:var(--ink);border-bottom:1px solid var(--ink);
@@ -360,9 +375,9 @@ body:not(.has-cursor) .svc-row:hover .nm,.svc-row.hover .nm,.svc-row.js-hover .n
 }
 body:not(.has-cursor) .contact-mail:hover,.contact-mail.js-hover{color:var(--accent);border-color:var(--accent)}
 .contact-social{display:flex;flex-wrap:wrap;gap:34px;border-top:1px solid var(--line);padding-top:28px}
-.contact-social a{font-size:14px;color:var(--ink-soft);position:relative;padding-bottom:4px;transition:color .3s}
+.contact-social a{font-size:14px;color:var(--ink-soft);position:relative;padding-bottom:4px;transition:color .3s,transform .4s var(--ease)}
 .contact-social a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease)}
-body:not(.has-cursor) .contact-social a:hover,.contact-social a.js-hover{color:var(--ink)}
+body:not(.has-cursor) .contact-social a:hover,.contact-social a.js-hover{color:var(--ink);transform:scale(1.12)}
 body:not(.has-cursor) .contact-social a:hover::after,.contact-social a.js-hover::after{transform:scaleX(1)}
 .contact-social .note{font-size:12px;color:var(--ink-soft);opacity:.7}
 
@@ -707,7 +722,10 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
 <section class="contact" id="contact">
   <div class="wrap">
     <p class="kicker fade-up">Contact</p>
-    <h2 class="big"><span class="reveal"><span class="reveal-inner">一起，做点<em>值得收藏</em>的东西。</span></span></h2>
+    <div class="title-row">
+      <h2 class="big"><span class="reveal"><span class="reveal-inner">一起，做点<em>值得收藏</em>的东西。</span></span></h2>
+      <a class="gallery-entry fade-up" href="gallery/线上绘画展厅.html">→ 进入线上展厅</a>
+    </div>
     <a class="contact-mail copy-mail fade-up" href="mailto:3428768415@qq.com">3428768415@qq.com</a>
     <div class="contact-social fade-up">
       <a href="https://xhslink.cn/o/Ah0uFfwM6Ey" target="_blank" rel="noopener">小红书</a>

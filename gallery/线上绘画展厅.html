@@ -20,6 +20,11 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#141210}
 body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
 #scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+/* 前景画作层：画作覆盖在 veil 之上 */
+#artview-canvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:46;pointer-events:none;display:none}
+/* 画作取下查看模式的背景 veil：与详情卡片 veil 完全一致（盖住主场景与全部周围组件） */
+#artveil{position:fixed;inset:0;z-index:45;background:rgba(15,14,12,.38);backdrop-filter:blur(9px) saturate(1.05);-webkit-backdrop-filter:blur(9px) saturate(1.05);pointer-events:none;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease}
+#artveil.show{opacity:1;visibility:visible}
 
 /* ===== 通用覆盖层 ===== */
 .overlay{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center}
@@ -57,17 +62,23 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
   padding:0 18px;color:rgba(245,242,236,.82);font-size:12px;font-weight:300;letter-spacing:.1em;line-height:2;text-align:right;
   transition:max-height .45s var(--ease),opacity .35s var(--ease),padding .45s var(--ease)
 }
-#manual:hover .manual-body,#manual:focus-within .manual-body{max-height:200px;opacity:1;pointer-events:auto;padding:14px 18px}
+#manual:hover .manual-body{max-height:220px;opacity:1;pointer-events:auto;padding:14px 18px}
 .manual-body b{color:var(--gold);font-weight:500}
 
-/* ===== 退出展厅 ===== */
+/* ===== 退出展厅：圆形 ✕ ===== */
 #exit-btn{
   position:fixed;top:22px;right:26px;z-index:40;
-  font-size:12px;font-weight:300;letter-spacing:.2em;color:rgba(245,242,236,.85);
-  background:rgba(15,14,12,.42);border:1px solid rgba(200,162,75,.5);border-radius:99px;
-  padding:9px 18px;cursor:pointer;transition:background .3s ease,color .3s ease,border-color .3s ease
+  width:38px;height:38px;border-radius:50%;padding:0;
+  font-size:15px;line-height:1;color:rgba(245,242,236,.9);
+  background:rgba(15,14,12,.5);border:1px solid rgba(200,162,75,.55);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background .3s ease,color .3s ease,border-color .3s ease
 }
 #exit-btn:hover{background:var(--gold);color:#1c1a16;border-color:var(--gold)}
+
+/* 「走近这幅画」查看模式：画下方返回详情按钮 */
+#return-detail{position:fixed;left:50%;transform:translateX(-50%);bottom:8vh;z-index:60;display:none;color:var(--gold);border-color:rgba(200,162,75,.85);background:rgba(15,14,12,.6)}
+#return-detail.show{display:block}
 
 /* 作品索引（可折叠） */
 #work-list{position:fixed;left:26px;bottom:22px;z-index:20;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
@@ -80,17 +91,21 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
 .wl-toggle:hover,.wl-toggle:focus-visible{background:rgba(200,162,75,.18);border-color:var(--gold);outline:none}
 .wl-toggle .arr{font-size:11px;color:var(--gold);transition:transform .4s var(--ease)}
 #work-list.collapsed .wl-toggle .arr{transform:rotate(-90deg)}
-.wl-body{overflow:hidden;max-height:200px;opacity:1;transition:max-height .5s var(--ease),opacity .4s var(--ease);display:flex;flex-direction:column;gap:2px}
+.wl-body{overflow-y:auto;overflow-x:hidden;max-height:440px;opacity:1;transition:max-height .5s var(--ease),opacity .4s var(--ease);display:flex;flex-direction:column;gap:2px;scrollbar-width:thin;scrollbar-color:rgba(200,162,75,.45) transparent}
+.wl-body::-webkit-scrollbar{width:5px}
+.wl-body::-webkit-scrollbar-thumb{background:rgba(200,162,75,.45);border-radius:3px}
+.wl-body::-webkit-scrollbar-track{background:transparent}
 #work-list.collapsed .wl-body{max-height:0;opacity:0;pointer-events:none}
 .wl-item{
   display:flex;align-items:baseline;gap:14px;padding:8px 10px;background:rgba(15,14,12,.34);
   border:1px solid transparent;border-left:1px solid rgba(200,162,75,.45);cursor:pointer;
-  color:rgba(245,242,236,.85);text-align:left;transition:background .3s ease,border-color .3s ease;user-select:none;min-height:44px
+  color:rgba(245,242,236,.85);text-align:left;transition:background .3s ease,border-color .3s ease;user-select:none;min-height:44px;flex:none
 }
 .wl-item:hover,.wl-item:focus-visible{background:rgba(200,162,75,.16);border-color:var(--gold);outline:none}
 .wl-item .num{font-family:var(--serif);color:var(--gold);font-size:12px;letter-spacing:.2em;flex:none}
 .wl-item .nm{font-family:var(--serif);font-size:14px;letter-spacing:.12em;white-space:nowrap}
-.wl-group{margin:6px 0 0;padding:2px 10px;font-size:11px;letter-spacing:.26em;color:rgba(200,162,75,.78);font-weight:300;user-select:none}
+.wl-group{margin:22px 0 6px;padding:2px 10px;font-size:11px;letter-spacing:.26em;color:rgba(200,162,75,.78);font-weight:300;user-select:none;flex:none}
+.wl-item[data-i="7"]{margin-top:22px}
 
 /* ===== 详情灯箱 ===== */
 #lightbox{z-index:50;visibility:hidden;opacity:0;transition:opacity .35s ease}
@@ -107,39 +122,59 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
 .lb-btn:hover{background:var(--gold);color:#1c1a16}
 .lb-btn.ghost{border-color:rgba(245,242,236,.35);background:transparent}
 .lb-btn.ghost:hover{background:rgba(245,242,236,.14);color:var(--paper)}
-.lb-close{position:absolute;top:14px;right:18px;color:rgba(245,242,236,.7);font-size:26px;line-height:1;cursor:pointer;padding:8px;background:none;border:none;font-weight:300}
-.lb-close:hover{color:var(--gold)}
 
 /* ===== 移动端控制 ===== */
 #mobile-controls{position:fixed;inset:0;z-index:25;pointer-events:none;display:none;touch-action:none}
 #mobile-controls.show{display:block}
-.mv-btn{
-  position:absolute;pointer-events:auto;width:74px;height:74px;border-radius:50%;
-  background:rgba(245,242,236,.10);border:1px solid rgba(245,242,236,.35);color:rgba(245,242,236,.9);
-  font-family:var(--serif);font-size:20px;letter-spacing:.1em;display:flex;align-items:center;justify-content:center;
-  user-select:none;-webkit-user-select:none;touch-action:none
-}
-.mv-btn:active{background:rgba(200,162,75,.35)}
-#mv-fwd{bottom:34px;left:calc(50% - 78px)}
-#mv-back{bottom:34px;left:calc(50% + 6px)}
 .mv-tip{position:absolute;top:18px;left:50%;transform:translateX(-50%);color:rgba(245,242,236,.55);font-size:12px;letter-spacing:.2em;font-weight:300}
+/* 虚拟摇杆：拖动控制行走方向 */
+.joy{position:absolute;left:24px;bottom:30px;width:116px;height:116px;pointer-events:auto;touch-action:none}
+.joy-base{position:absolute;inset:0;border-radius:50%;background:rgba(245,242,236,.08);border:1px solid rgba(245,242,236,.35)}
+.joy-knob{
+  position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
+  background:rgba(245,242,236,.22);border:1px solid rgba(245,242,236,.55);
+  transition:transform .08s linear;touch-action:none;pointer-events:none
+}
+.joy-ring{position:absolute;inset:14px;border-radius:50%;border:1px dashed rgba(200,162,75,.4);pointer-events:none}
 
 @media (max-width:760px){
-  #work-list{left:16px;bottom:120px}
+  #work-list{left:16px;bottom:172px}
   .wl-item .nm{font-size:13px}
   #brand{top:16px;left:18px}
   .lb-card{flex-direction:column;gap:18px;overflow-y:auto;padding:40px 22px 24px;align-items:center;text-align:center}
   .lb-img{max-height:46vh;max-width:88vw}
   .lb-actions{justify-content:center}
   #manual{display:none}
+  /* 操作说明固定到屏幕最底部，不与其它文字重叠 */
+  .overlay .tips{position:fixed;left:20px;right:20px;bottom:14px;text-align:center;z-index:31;line-height:1.9;font-size:11px;margin-top:0}
 }
 @media (prefers-reduced-motion: reduce){
   .overlay,.overlay-card,.enter-btn{transition:none}
 }
 </style>
+<!-- 入场加载层样式（与主页一致） -->
+<style>
+#loader{position:fixed;inset:0;z-index:99999;background:#1F1C15;display:flex;align-items:center;justify-content:center;transition:opacity .7s cubic-bezier(.22,1,.36,1),visibility .7s cubic-bezier(.22,1,.36,1)}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.ld-inner{text-align:center;padding:0 24px}
+.ld-name{font-family:"Cormorant Garamond","Noto Serif SC",serif;font-style:italic;font-weight:500;font-size:clamp(36px,6vw,64px);color:#F1EDE3;letter-spacing:.03em;line-height:1}
+.ld-sub{margin-top:16px;font-family:"Noto Serif SC","Songti SC","SimSun",serif;font-size:12px;letter-spacing:.4em;color:rgba(241,237,227,.55);text-indent:.4em}
+.ld-line{width:min(300px,58vw);height:2px;background:rgba(241,237,227,.14);margin:36px auto 0;overflow:hidden}
+.ld-line i{display:block;height:100%;width:0;background:#A4442E;transition:width .25s linear}
+@media(prefers-reduced-motion:reduce){#loader{display:none}}
+</style>
 </head>
 <body>
+<!-- 入场加载层：展厅资源（画作纹理/字体）就绪后淡出，露出开始页 -->
+<div id="loader" aria-hidden="true">
+  <div class="ld-inner">
+    <div class="ld-name">Vinson</div>
+    <div class="ld-sub">文森 · 数字插画 · 文创设计</div>
+    <div class="ld-line"><i></i></div>
+  </div>
+</div>
 <canvas id="scene"></canvas>
+<div id="artveil"></div>
 
 <div id="brand">
   <div class="zh">线上数字展厅</div>
@@ -162,15 +197,16 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
 </nav>
 
 <div id="manual">
-  <div class="manual-tab">操作手册</div>
+  <div class="manual-tab" id="manual-tab">操作手册</div>
   <div class="manual-body">
-    <p>移动 <b>W A S D</b> / 方向键 · 鼠标环视 · 点击画作 欣赏详情</p>
+    <p>移动 <b>W A S D</b> / 方向键 · 鼠标环视 · 点击画作 了解详情</p>
     <p>长按 <b>Shift</b> 快走 · 长按 <b>Alt</b> 调出鼠标 · 点击目录 前往欣赏</p>
     <p>自定义环境（数字键隐藏 / 恢复）：1 格栅 · 2 顶灯 · 3 横梁 · 4 灯带 · 5 立柱 · 6 地毯 · 7 雕塑 · 8 射灯 · 9 画作</p>
   </div>
 </div>
 
-<button id="exit-btn" aria-label="退出展厅">退出展厅</button>
+<button id="exit-btn" aria-label="退出展厅" title="退出展厅"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+<button class="lb-btn" id="return-detail" aria-label="返回详情">返回详情</button>
 
 <div id="enter-screen" class="overlay" role="dialog" aria-modal="true">
   <div class="veil"></div>
@@ -180,16 +216,15 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
     <div class="sub">灰白殿堂之中 · 呈上光影与笔触</div>
     <div class="rule"></div>
     <button class="enter-btn" id="btn-enter">点击进入展厅</button>
-    <div class="tips">电脑 · WASD / 方向键 行走，鼠标 环视，点击画作 查看详情，长按 Alt 调出鼠标<br>触屏 · 拖动屏幕 环视，长按按钮 行走，点击作品名 前往欣赏<br><span style="opacity:.55">自定义环境（数字键隐藏 / 恢复）：1格栅 2顶灯 3横梁 4灯带 5立柱 6地毯 7雕塑 8射灯 9画作</span></div>
+    <div class="tips">电脑 · WASD / 方向键 行走，鼠标 环视，点击画作 查看详情，长按 Alt 调出鼠标<br>触屏 · 拖动屏幕 环视，摇杆 行走，点击目录 前往欣赏<br><span style="opacity:.55">自定义环境（数字键隐藏 / 恢复）：1格栅 2顶灯 3横梁 4灯带 5立柱 6地毯 7雕塑 8射灯 9画作</span></div>
   </div>
 </div>
 
 <div id="lightbox" class="overlay" role="dialog" aria-modal="true">
   <div class="veil"></div>
-  <div class="lb-card">
-    <button class="lb-close" id="lb-close" aria-label="关闭">&times;</button>
+  <div class="lb-card" id="lb-card">
     <img class="lb-img" id="lb-img" alt="作品大图">
-    <div class="lb-info">
+    <div class="lb-info" id="lb-info">
       <div class="idx" id="lb-idx">作品 01 / 03</div>
       <h2 id="lb-title">匈牙利 · 星夜</h2>
       <div class="meta" id="lb-meta">Vinson · 数字插画</div>
@@ -203,9 +238,11 @@ body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased
 </div>
 
 <div id="mobile-controls">
-  <div class="mv-tip">拖动屏幕环视 · 长按按钮行走</div>
-  <div class="mv-btn" id="mv-fwd">前进</div>
-  <div class="mv-btn" id="mv-back">后退</div>
+  <div class="mv-tip">拖动屏幕环视 · 摇杆行走</div>
+  <div class="joy" id="joy">
+    <div class="joy-ring"></div>
+    <div class="joy-base"><div class="joy-knob" id="joy-knob"></div></div>
+  </div>
 </div>
 
 <script id="three-lib">/**
@@ -875,6 +912,9 @@ function buildSculptures(){
 /* ================= 画作（简约双层木框 + 画布 + 展签） ================= */
 var paintingMeshes=[];
 function buildPaintings(){
+  /* 纹理加载计数：入场加载层等待全部画作就绪后淡出 */
+  window.__artTotal=ART.length;window.__artDone=0;
+  window.__artLoaded=function(){window.__artDone++;if(window.__artDone>=window.__artTotal){window.artReady=true;}};
   var frameMat=std({color:0x2E2016,roughness:0.62,metalness:0.02});
   var matMat=std({color:0xF4F0E6,roughness:0.9,metalness:0.0});
   var i;
@@ -893,18 +933,18 @@ function buildPaintings(){
     var tex=new THREE.Texture();
     (function(t,uri){
       var im=new Image();
-      im.onload=function(){t.image=im;t.needsUpdate=true;};
+      im.onload=function(){t.image=im;t.needsUpdate=true;if(window.__artLoaded)window.__artLoaded();};
+      im.onerror=function(){if(window.__artLoaded)window.__artLoaded();};
       im.src=uri;
     })(tex,(location.protocol==='file:'&&window.ART_DATA&&window.ART_DATA[i])?window.ART_DATA[i]:a.src);
     tex.encoding=THREE.sRGBEncoding;tex.anisotropy=8;
-    /* 厚衬纸：比画布四周各宽 0.13（图2 装裱样式），与画布拉开间距避免远看闪烁；爱乐之城无衬纸 */
-    if(!isHero){
-      var mat=new THREE.Mesh(new THREE.BoxGeometry(pw+0.26,ph+0.26,0.02),matMat);
-      mat.position.z=0.0;g.add(mat);
-    }
+    /* 厚衬纸：画布后白色垫层；爱乐之城画布紧贴画框（衬纸不外露），其余画四周各宽 0.13 */
+    var matW=isHero?pw:pw+0.26,matH=isHero?ph:ph+0.26;
+    var mat=new THREE.Mesh(new THREE.BoxGeometry(matW,matH,0.02),matMat);
+    mat.position.z=0.0;g.add(mat);
     var paint=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),
-      std({map:tex,roughness:1,metalness:0.0,envMapIntensity:0}));
-    paint.position.z=isHero?0.005:0.02;g.add(paint);
+      new THREE.MeshBasicMaterial({map:tex,toneMapped:false}));
+    paint.position.z=0.02;g.add(paint);
     /* 最外层木制框：窄框条，四角端端相接成 L 形闭合（无缝隙无悬伸）；爱乐之城画框紧贴画面 */
     var wb=0.055,t=0.07,me=isHero?0:0.11;
     var top=new THREE.Mesh(new THREE.BoxGeometry(pw+2*(me+wb),wb,t),frameMat);
@@ -925,6 +965,7 @@ function buildPaintings(){
       labelMesh.material.map=t2;labelMesh.material.needsUpdate=true;};})({title:a.title,no:i+1})});
     var labelMesh=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.196),
       new THREE.MeshBasicMaterial({map:lt}));
+    labelMesh.userData.isLabel=true;
     var labCy=isHero?3.35:(small?2.3:(i===0?2.75:2.6));
     labelMesh.position.set(pw/2+0.60,1.58-labCy,0.03);g.add(labelMesh);
 
@@ -965,8 +1006,9 @@ function buildPaintings(){
       var lens=new THREE.Mesh(new THREE.CircleGeometry(0.07,18),lensMat2);
       lens.position.y=-0.15;lens.rotation.x=Math.PI/2;fg.add(lens);
       var dx2=cx-fx,dy2=cy-5.62,dz2=cz-fz;
-      if(isHero){fg.rotation.z=Math.atan2(dx2,-dy2);}   /* 东墙画朝 -X：绕 Z 轴转向画作 */
-      else{fg.rotation.x=Math.atan2(-dz2,-dy2);}
+      /* 灯头完整三维对准画作（-Y 轴指向画中心），补偿 x/z 偏移，避免光斑偏出画面 */
+      var dirv=new THREE.Vector3(dx2,dy2,dz2).normalize();
+      fg.quaternion.setFromUnitVectors(new THREE.Vector3(0,-1,0),dirv);
       scene.add(fg);GRP.spot.push(fg);
       /* 灯光从灯泡口发出，指向画作：照亮范围收窄、边缘虚化加大（柔和聚拢）；爱乐之城（东墙大画）光斑范围扩大一点 */
       var spot=new THREE.SpotLight(0xFFF6E0,1.1,20,isHero?0.5:0.42,0.85,1.2);
@@ -1013,7 +1055,7 @@ function clampPos(p){
 var locked=false,state='enter'; /* enter | walking | lightbox */
 var altHeld=false;
 var keys={};
-var moveFwd=false,moveBack=false;
+var moveFwd=false,moveBack=false,moveLeft=false,moveRight=false;
 function fwd(){
   var cy=Math.cos(yaw),sy=Math.sin(yaw);
   return new THREE.Vector3(-sy*Math.cos(pitch),0,-cy*Math.cos(pitch));
@@ -1035,6 +1077,7 @@ function onKeyDown(e){
   if(e.code==='ArrowLeft')keys['KeyA']=true;
   if(e.code==='ArrowRight')keys['KeyD']=true;
   if(e.code==='Escape'&&state==='lightbox'){closeLightbox();}
+  else if(e.code==='Escape'&&state==='artview'){exitArtView();}
   /* 长按 Alt：调出鼠标（退出指针锁定） */
   if(e.code==='AltLeft'||e.code==='AltRight'){
     e.preventDefault();
@@ -1069,10 +1112,10 @@ function onMouseMove(e){
 document.addEventListener('mousemove',onMouseMove);
 
 canvas.addEventListener('click',function(e){
+  if(state==='artview')return;
   if(!locked){
-    /* 未锁定时点击画布：长按 Alt 松开后如未恢复，点击可重新锁定 */
     if(!isTouch&&state==='walking'&&!altHeld&&!fly)canvas.requestPointerLock();
-    return;
+    if(!isTouch)return;   /* 触屏无指针锁定：直接按点击位置拾取画作 */
   }
   var r=new THREE.Raycaster();
   r.setFromCamera(new THREE.Vector2(
@@ -1102,6 +1145,7 @@ $('btn-enter').addEventListener('click',function(){
 /* ================= 移动端：拖拽环视 + 行走按钮 ================= */
 var touchLook={on:false,lx:0,ly:0};
 canvas.addEventListener('touchstart',function(e){
+  if(state==='artview')return;
   if(touchLook.on)return;
   touchLook.on=true;touchLook.lx=e.touches[0].clientX;touchLook.ly=e.touches[0].clientY;
 },{passive:true});
@@ -1114,14 +1158,38 @@ canvas.addEventListener('touchmove',function(e){
   applyLook();
 },{passive:true});
 canvas.addEventListener('touchend',function(){touchLook.on=false;},{passive:true});
-function bindHold(el,down,up){
-  el.addEventListener('pointerdown',function(e){e.preventDefault();down();});
-  el.addEventListener('pointerup',function(){up();});
-  el.addEventListener('pointercancel',function(){up();});
-  el.addEventListener('pointerleave',function(){up();});
+/* 虚拟摇杆：拖动控制前后左右行走 */
+var joyOn=false,joyCx=0,joyCy=0,joyMax=40;
+var joyEl=$('joy'),knob=$('joy-knob');
+function joySet(dx,dy){
+  var len=Math.sqrt(dx*dx+dy*dy);
+  if(len>joyMax){dx=dx/len*joyMax;dy=dy/len*joyMax;}
+  knob.style.transform='translate('+dx+'px,'+dy+'px)';
+  var dead=0.14,n=(len>joyMax?joyMax:len)/joyMax;
+  moveFwd=false;moveBack=false;moveLeft=false;moveRight=false;
+  if(n>dead){
+    var fx=dx/joyMax,fy=dy/joyMax;
+    if(fy<-dead)moveFwd=true;
+    if(fy>dead)moveBack=true;
+    if(fx<-dead)moveLeft=true;
+    if(fx>dead)moveRight=true;
+  }
 }
-bindHold($('mv-fwd'),function(){moveFwd=true;},function(){moveFwd=false;});
-bindHold($('mv-back'),function(){moveBack=true;},function(){moveBack=false;});
+function joyReset(){moveFwd=false;moveBack=false;moveLeft=false;moveRight=false;knob.style.transform='translate(0,0)';}
+joyEl.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  var t=e.touches[0],r=joyEl.getBoundingClientRect();
+  joyCx=r.left+r.width/2;joyCy=r.top+r.height/2;joyOn=true;
+  joySet(t.clientX-joyCx,t.clientY-joyCy);
+},{passive:false});
+joyEl.addEventListener('touchmove',function(e){
+  if(!joyOn)return;
+  e.preventDefault();
+  var t=e.touches[0];
+  joySet(t.clientX-joyCx,t.clientY-joyCy);
+},{passive:false});
+joyEl.addEventListener('touchend',function(){joyOn=false;joyReset();});
+joyEl.addEventListener('touchcancel',function(){joyOn=false;joyReset();});
 function startTouch(){
   state='walking';
   $('enter-screen').style.display='none';
@@ -1136,7 +1204,8 @@ function flyTo(pos,lookPos,cb){
   $('enter-screen').style.display='none';
   if(isTouch)$('mobile-controls').classList.add('show');
   var sx=camera.position.x,sy=camera.position.y,sz=camera.position.z;
-  var dx=lookPos.x-sx,dy=lookPos.y-sy,dz=lookPos.z-sz;
+  /* 目标朝向：按终点位置 pos 指向 lookPos 计算，保证飞行结束站在画正前方、视线正对画中心 */
+  var dx=lookPos.x-pos.x,dy=lookPos.y-pos.y,dz=lookPos.z-pos.z;
   var ty=Math.atan2(-dx,-dz);
   var tp=Math.atan2(dy,Math.sqrt(dx*dx+dz*dz));
   var sy0=yaw,sp0=pitch;
@@ -1152,18 +1221,32 @@ function flyTo(pos,lookPos,cb){
   }
   fly=step;requestAnimationFrame(step);
 }
+/* 观看位置：仅水平移动到画正前方（高度保持人眼高度不变），视线对准画中心 */
 var VIEW_POS=[
-  {p:{x:-6.2,y:1.68,z:-9.2},l:{x:-6.2,y:2.75,z:-11.4}},
-  {p:{x:0,y:1.68,z:-9.2},l:{x:0,y:2.75,z:-11.4}},
-  {p:{x:6.2,y:1.68,z:-9.2},l:{x:6.2,y:2.75,z:-11.4}},
-  {p:{x:-6.3,y:1.68,z:9.2},l:{x:-6.3,y:2.3,z:11.4}},
-  {p:{x:-2.1,y:1.68,z:9.2},l:{x:-2.1,y:2.3,z:11.4}},
-  {p:{x:2.1,y:1.68,z:9.2},l:{x:2.1,y:2.3,z:11.4}},
-  {p:{x:6.3,y:1.68,z:9.2},l:{x:6.3,y:2.3,z:11.4}},
-  {p:{x:22.4,y:1.68,z:0},l:{x:23.6,y:3.1,z:0}}
+  {p:{x:-6.2,y:1.68,z:-7.8},l:{x:-6.2,y:2.75,z:-11.82}},
+  {p:{x:0,y:1.68,z:-7.8},l:{x:0,y:2.75,z:-11.82}},
+  {p:{x:6.2,y:1.68,z:-7.8},l:{x:6.2,y:2.75,z:-11.82}},
+  {p:{x:-6.3,y:1.68,z:8.8},l:{x:-6.3,y:2.3,z:11.82}},
+  {p:{x:-2.1,y:1.68,z:8.8},l:{x:-2.1,y:2.3,z:11.82}},
+  {p:{x:2.1,y:1.68,z:8.8},l:{x:2.1,y:2.3,z:11.82}},
+  {p:{x:6.3,y:1.68,z:8.8},l:{x:6.3,y:2.3,z:11.82}},
+  {p:{x:17.8,y:1.68,z:0},l:{x:23.8,y:3.1,z:0}}
 ];
+/* 各画作挂载中心（世界坐标） */
+var ART_CENTER=[
+  {x:-6.2,y:2.75,z:-11.82},{x:0,y:2.75,z:-11.82},{x:6.2,y:2.75,z:-11.82},
+  {x:-6.3,y:2.3,z:11.82},{x:-2.1,y:2.3,z:11.82},{x:2.1,y:2.3,z:11.82},{x:6.3,y:2.3,z:11.82},
+  {x:23.8,y:3.1,z:0}
+];
+function artWorldH(i){
+  if(i===7)return 2.0;   /* 爱乐之城取下时缩小到约 2m 高 */
+  if(i>=3&&i<7)return 0.95;
+  var a=ART[i];return (a.w===a.h)?1.38:2.12;
+}
 var curArt=-1;
 function openLightbox(i){
+  /* 若正处于画作取下查看，先清理（还原画作与展签），避免残留到其它画的前景场景 */
+  if(state==='artview')exitArtView(true);
   curArt=i;
   fly=null;
   if(document.pointerLockElement===canvas)document.exitPointerLock();
@@ -1181,19 +1264,183 @@ function closeLightbox(){
   state='walking';
   if(!isTouch&&!fly)canvas.requestPointerLock();
 }
-$('lb-close').addEventListener('click',closeLightbox);
 $('lb-back').addEventListener('click',closeLightbox);
+/* 「走近这幅画」：画作从墙上取下，自由旋转缩放查看（轨道视角），背景模糊，画下方显示返回详情 */
+var orb={on:false,x:0,y:0,tx:0,ty:0,tz:0,theta:0,phi:0,dist:3,pinch:0};
+var artGrab={on:false,i:-1,from:null,to:null,r0:0,r1:0,s0:1,s1:1,t0:0,dur:750};
+var artLabels=[];
+/* 前景画作场景：画作单独渲染，覆盖在背景之上（光照与主场景相近，呈现原画色调） */
+var fgCanvas=document.createElement('canvas');
+fgCanvas.id='artview-canvas';
+document.body.appendChild(fgCanvas);
+var fgRenderer=new THREE.WebGLRenderer({canvas:fgCanvas,alpha:true,antialias:true});
+fgRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,isTouch?1.5:2));
+fgRenderer.setSize(window.innerWidth,window.innerHeight);
+fgRenderer.outputEncoding=THREE.sRGBEncoding;
+fgRenderer.toneMapping=THREE.ACESFilmicToneMapping;
+fgRenderer.toneMappingExposure=0.92;
+var fgScene=new THREE.Scene();
+fgScene.background=null;
+fgScene.add(new THREE.HemisphereLight(0xFFFDF7,0xA9A69F,0.5));
+var fgDir=new THREE.DirectionalLight(0xFFF3E2,1.1);
+fgDir.position.set(0,3,2);
+fgScene.add(fgDir);
+/* 模拟展厅射灯：从画作前上方照亮画布（与墙上挂画观感一致） */
+var fgSpot=new THREE.SpotLight(0xFFF6E0,2.4,0,Math.PI/6,0.55,1);
+var fgSpotTarget=new THREE.Object3D();
+fgScene.add(fgSpotTarget);
+fgSpot.target=fgSpotTarget;
+fgScene.add(fgSpot);
+var fgCam=new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.1,160);
+function orbitView(){
+  var cp=Math.cos(orb.phi);
+  fgCam.position.set(
+    orb.tx+orb.dist*cp*Math.sin(orb.theta),
+    orb.ty+orb.dist*Math.sin(orb.phi),
+    orb.tz+orb.dist*cp*Math.cos(orb.theta));
+  fgCam.lookAt(new THREE.Vector3(orb.tx,orb.ty,orb.tz));
+}
+function grabStep(){
+  var k=Math.min(1,(performance.now()-artGrab.t0)/artGrab.dur);
+  var e=1-Math.pow(1-k,3);
+  var g=paintingMeshes[artGrab.i];
+  g.position.set(
+    artGrab.from.x+(artGrab.to.x-artGrab.from.x)*e,
+    artGrab.from.y+(artGrab.to.y-artGrab.from.y)*e,
+    artGrab.from.z+(artGrab.to.z-artGrab.from.z)*e);
+  g.rotation.y=artGrab.r0+(artGrab.r1-artGrab.r0)*e;
+  var s=artGrab.s0+(artGrab.s1-artGrab.s0)*e;
+  g.scale.set(s,s,s);
+  if(k>=1)artGrab.on=false;
+}
+function enterArtView(i){
+  $('lightbox').classList.remove('show');
+  if(document.pointerLockElement===canvas)document.exitPointerLock();
+  var g=paintingMeshes[i];
+  var c=ART_CENTER[i];
+  /* 展签固定在墙面上不动：取画前记录原始局部坐标，展签留在主场景墙上原位（取画时与背景一起被 veil 模糊） */
+  artLabels=[];
+  var tmpV=new THREE.Vector3(),tmpQ=new THREE.Quaternion();
+  for(var li=g.children.length-1;li>=0;li--){
+    if(g.children[li].userData.isLabel){
+      var lbl=g.children[li];
+      artLabels.push({m:lbl,p:lbl.position.clone(),q:lbl.quaternion.clone()});
+      lbl.getWorldPosition(tmpV);lbl.getWorldQuaternion(tmpQ);
+      g.remove(lbl);
+      lbl.position.copy(tmpV);lbl.quaternion.copy(tmpQ);
+      scene.add(lbl);
+    }
+  }
+  scene.remove(g);
+  fgScene.add(g);
+  /* 目标位置：主相机正前方 2.6m；取下动画沿纵轴转一整圈后停住面向观察者；大幅画取下时适当缩小 */
+  var fx=-Math.sin(yaw),fz=-Math.cos(yaw);
+  var to={x:camera.position.x+fx*2.6,y:camera.position.y,z:camera.position.z+fz*2.6};
+  var target=Math.atan2(camera.position.x-to.x,camera.position.z-to.z);
+  var delta=((target-g.rotation.y)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+  artGrab={on:true,i:i,from:{x:g.position.x,y:g.position.y,z:g.position.z},to:to,
+    r0:g.rotation.y,r1:g.rotation.y+Math.PI*2+delta,s0:1,s1:(i===7?0.62:1),t0:performance.now(),dur:750};
+  /* 前景射灯：从观察者一侧上方照向画作正面（无论相机朝向哪个方向，光都在画这一侧） */
+  fgSpot.position.set(camera.position.x,camera.position.y+2.4,camera.position.z);
+  fgSpotTarget.position.set(to.x,to.y,to.z);
+  orb.tx=to.x;orb.ty=to.y;orb.tz=to.z;
+  orb.dist=2.6;
+  orb.theta=Math.atan2(camera.position.x-to.x,camera.position.z-to.z);
+  orb.phi=0;
+  state='artview';
+  $('artveil').classList.add('show');
+  fgCanvas.style.display='block';
+  $('return-detail').classList.add('show');
+  if(isTouch)$('mobile-controls').classList.remove('show');
+}
+function exitArtView(skipOpen){
+  $('return-detail').classList.remove('show');
+  var g=paintingMeshes[curArt];
+  var c=ART_CENTER[curArt];
+  fgScene.remove(g);
+  g.scale.set(1,1,1);
+  g.position.set(c.x,c.y,c.z);
+  g.rotation.y=(curArt===7)?-Math.PI/2:(curArt<3?0:Math.PI);
+  scene.add(g);
+  /* 展签放回画作旁：按取画前记录的原始局部坐标精确恢复 */
+  for(var li2=0;li2<artLabels.length;li2++){
+    var it=artLabels[li2];
+    g.add(it.m);
+    it.m.position.copy(it.p);it.m.quaternion.copy(it.q);
+  }
+  artLabels=[];
+  $('artveil').classList.remove('show');
+  fgCanvas.style.display='none';
+  state='walking';
+  if(isTouch)$('mobile-controls').classList.add('show');
+  if(!skipOpen)openLightbox(curArt);
+}
 $('lb-walk').addEventListener('click',function(){
   if(curArt<0)return;
-  $('lightbox').classList.remove('show');
-  var v=VIEW_POS[curArt];
-  flyTo(v.p,v.l,function(){
-    if(!isTouch&&state==='walking')canvas.requestPointerLock();
-  });
+  enterArtView(curArt);
 });
+$('return-detail').addEventListener('click',function(){exitArtView(false);});
+/* 轨道拖动与缩放 */
+if(!isTouch){
+  canvas.addEventListener('pointerdown',function(e){
+    if(state!=='artview')return;
+    orb.on=true;orb.x=e.clientX;orb.y=e.clientY;
+    try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+  });
+  canvas.addEventListener('pointermove',function(e){
+    if(!orb.on||state!=='artview')return;
+    orb.theta-=(e.clientX-orb.x)*0.007;
+    orb.phi+=(e.clientY-orb.y)*0.007;
+    if(orb.phi>1.4)orb.phi=1.4;if(orb.phi<-1.4)orb.phi=-1.4;
+    orb.x=e.clientX;orb.y=e.clientY;
+  });
+  canvas.addEventListener('pointerup',function(){orb.on=false;});
+  canvas.addEventListener('pointercancel',function(){orb.on=false;});
+  canvas.addEventListener('wheel',function(e){
+    if(state!=='artview')return;
+    e.preventDefault();
+    var h=artWorldH(curArt);
+    orb.dist=Math.max(h*0.7,Math.min(h*4.5,orb.dist*(e.deltaY<0?0.88:1.12)));
+  },{passive:false});
+}else{
+  canvas.addEventListener('touchstart',function(e){
+    if(state!=='artview')return;
+    if(e.touches.length===2){
+      orb.pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      orb.on=false;
+    }else{
+      orb.on=true;orb.x=e.touches[0].clientX;orb.y=e.touches[0].clientY;
+    }
+  },{passive:true});
+  canvas.addEventListener('touchmove',function(e){
+    if(state!=='artview')return;
+    e.preventDefault();
+    if(e.touches.length===2){
+      var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      if(orb.pinch){
+        var h=artWorldH(curArt);
+        orb.dist=Math.max(h*0.7,Math.min(h*4.5,orb.dist*(orb.pinch/d)));
+      }
+      orb.pinch=d;
+    }else if(orb.on){
+      var t=e.touches[0];
+      orb.theta-=(t.clientX-orb.x)*0.007;
+      orb.phi+=(t.clientY-orb.y)*0.007;
+      if(orb.phi>1.4)orb.phi=1.4;if(orb.phi<-1.4)orb.phi=-1.4;
+      orb.x=t.clientX;orb.y=t.clientY;
+    }
+  },{passive:false});
+  canvas.addEventListener('touchend',function(e){
+    if(state!=='artview')return;
+    orb.on=false;
+    if(e.touches.length<2)orb.pinch=0;
+  },{passive:true});
+}
 document.querySelectorAll('.wl-item').forEach(function(btn){
   btn.addEventListener('click',function(){
     var i=+btn.getAttribute('data-i');
+    /* 若正处于画作取下查看，先退出清理（画作归位、展签还原），再飞往目标 */
+    if(state==='artview')exitArtView(true);
     var v=VIEW_POS[i];
     $('lightbox').classList.remove('show');
     if(document.pointerLockElement===canvas)document.exitPointerLock();
@@ -1225,22 +1472,30 @@ function tick(){
   if(!running)return;
   requestAnimationFrame(tick);
   var dt=Math.min(clock.getDelta(),0.05);
-  /* 行走 */
-  if((locked||isTouch)&&state==='walking'&&!fly){
-    var sp=(keys['ShiftLeft']||keys['ShiftRight'])?4.1:2.1;
-    var mvx=0,mvz=0;
-    var f=fwd(),r=right();
-    var w=keys['KeyW']||moveFwd,s=keys['KeyS']||moveBack,
-        a=keys['KeyA'],d=keys['KeyD'];
-    var nx=camera.position.x,nz=camera.position.z;
-    if(w){nx+=f.x*sp*dt;nz+=f.z*sp*dt;}
-    if(s){nx-=f.x*sp*dt;nz-=f.z*sp*dt;}
-    if(a){nx-=r.x*sp*dt;nz-=r.z*sp*dt;}
-    if(d){nx+=r.x*sp*dt;nz+=r.z*sp*dt;}
-    var cp=clampPos(new THREE.Vector3(nx,1.68,nz));
-    camera.position.set(cp.x,1.68,cp.z);
+  /* 走近查看模式：画作在面前自由旋转缩放，背景主场景模糊 */
+  if(state==='artview'){
+    if(artGrab.on)grabStep();
+    orbitView();
+    fgRenderer.render(fgScene,fgCam);
+    renderer.render(scene,camera);
+  }else{
+    /* 行走 */
+    if((locked||isTouch)&&state==='walking'&&!fly){
+      var sp=(keys['ShiftLeft']||keys['ShiftRight'])?4.1:2.1;
+      var mvx=0,mvz=0;
+      var f=fwd(),r=right();
+      var w=keys['KeyW']||moveFwd,s=keys['KeyS']||moveBack,
+          a=keys['KeyA']||moveLeft,d=keys['KeyD']||moveRight;
+      var nx=camera.position.x,nz=camera.position.z;
+      if(w){nx+=f.x*sp*dt;nz+=f.z*sp*dt;}
+      if(s){nx-=f.x*sp*dt;nz-=f.z*sp*dt;}
+      if(a){nx-=r.x*sp*dt;nz-=r.z*sp*dt;}
+      if(d){nx+=r.x*sp*dt;nz+=r.z*sp*dt;}
+      var cp=clampPos(new THREE.Vector3(nx,1.68,nz));
+      camera.position.set(cp.x,1.68,cp.z);
+    }
+    applyLook();
   }
-  applyLook();
   renderer.render(scene,camera);
 }
 document.addEventListener('visibilitychange',function(){
@@ -1286,6 +1541,42 @@ function init(){
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',init);
 }else{init();}
+})();
+</script>
+<script>
+/* 入场加载层：等待展厅资源（画作纹理/字体/页面资源）就绪，最短展示后淡出露出开始页 */
+(function(){
+  var ld=document.getElementById('loader');
+  if(!ld)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){ld.remove();return;}
+  var bar=ld.querySelector('.ld-line i');
+  var minShown=900,start=performance.now(),fired=false,ready=false,fonts=false,art=false;
+  var iv=setInterval(function(){
+    if(!bar||fired)return;
+    bar.style.width=Math.min(100,((performance.now()-start)/minShown)*100)+'%';
+  },100);
+  function finish(){
+    if(fired)return;fired=true;
+    clearInterval(iv);
+    if(bar)bar.style.width='100%';
+    setTimeout(function(){ld.classList.add('done');},140);
+    setTimeout(function(){if(ld.parentNode)ld.parentNode.removeChild(ld);},900);
+  }
+  function check(){
+    if(ready&&fonts&&art){setTimeout(finish,Math.max(0,minShown-(performance.now()-start)));}
+  }
+  if(document.readyState==='complete'){ready=true;}
+  window.addEventListener('load',function(){ready=true;check();});
+  if(document.fonts&&document.fonts.ready){
+    document.fonts.ready.then(function(){fonts=true;check();});
+  }else{fonts=true;check();}
+  /* 画作纹理就绪：buildPaintings 完成全部 8 幅后置 artReady */
+  if(window.artReady){art=true;}
+  var poll=setInterval(function(){
+    if(window.artReady){art=true;check();clearInterval(poll);}
+  },200);
+  /* 兜底：个别资源卡住时不阻塞进入 */
+  setTimeout(function(){ready=true;fonts=true;art=true;check();},4000);
 })();
 </script>
 </body>

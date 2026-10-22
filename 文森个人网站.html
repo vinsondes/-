@@ -550,8 +550,28 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
   .cv-send{width:100%}
 }
 </style>
+<!-- 入场加载层样式 -->
+<style>
+#loader{position:fixed;inset:0;z-index:99999;background:#1F1C15;display:flex;align-items:center;justify-content:center;transition:opacity .7s var(--ease),visibility .7s var(--ease)}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.ld-inner{text-align:center;padding:0 24px}
+.ld-name{font-family:var(--font-latin);font-style:italic;font-weight:500;font-size:clamp(36px,6vw,64px);color:#F1EDE3;letter-spacing:.03em;line-height:1}
+.ld-sub{margin-top:16px;font-family:var(--font-serif);font-size:12px;letter-spacing:.4em;color:rgba(241,237,227,.55);text-indent:.4em}
+.ld-line{width:min(300px,58vw);height:2px;background:rgba(241,237,227,.14);margin:36px auto 0;overflow:hidden}
+.ld-line i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+@media(prefers-reduced-motion:reduce){#loader{display:none}}
+</style>
+<link rel="prefetch" href="gallery/线上绘画展厅.html">
 </head>
 <body>
+<!-- 入场加载层：关键资源就绪后淡出进入主页 -->
+<div id="loader" aria-hidden="true">
+  <div class="ld-inner">
+    <div class="ld-name">Vinson</div>
+    <div class="ld-sub">文森 · 数字插画 · 文创设计</div>
+    <div class="ld-line"><i></i></div>
+  </div>
+</div>
 <!-- 纸张颗粒质感层 -->
 <div class="grain" aria-hidden="true">
   <svg xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)" opacity="0.05"/></svg>
@@ -724,7 +744,7 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
     <p class="kicker fade-up">Contact</p>
     <div class="title-row">
       <h2 class="big"><span class="reveal"><span class="reveal-inner">一起，做点<em>值得收藏</em>的东西。</span></span></h2>
-      <a class="gallery-entry fade-up" href="gallery/线上绘画展厅.html">→ 进入线上展厅</a>
+      <a class="gallery-entry fade-up" href="gallery/线上绘画展厅.html" target="_blank" rel="noopener">→ 进入线上展厅</a>
     </div>
     <a class="contact-mail copy-mail fade-up" href="mailto:3428768415@qq.com">3428768415@qq.com</a>
     <div class="contact-social fade-up">
@@ -1703,6 +1723,37 @@ body:not(.has-cursor) .cv-bottom .contact-mail:hover,.cv-bottom .contact-mail.js
   if (svTop) svTop.addEventListener("click", function(){
     if (driveSv) driveSv.goTo(0, 1000);
   });
+})();
+</script>
+<script>
+/* 入场加载层：等待主页关键资源（图片/字体）就绪，最短展示后淡出进入主页 */
+(function(){
+  var ld=document.getElementById('loader');
+  if(!ld)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){ld.remove();return;}
+  var bar=ld.querySelector('.ld-line i');
+  var minShown=900,start=performance.now(),fired=false,ready=false,fonts=false;
+  var iv=setInterval(function(){
+    if(!bar||fired)return;
+    bar.style.width=Math.min(100,((performance.now()-start)/minShown)*100)+'%';
+  },100);
+  function finish(){
+    if(fired)return;fired=true;
+    clearInterval(iv);
+    if(bar)bar.style.width='100%';
+    setTimeout(function(){ld.classList.add('done');},140);
+    setTimeout(function(){if(ld.parentNode)ld.parentNode.removeChild(ld);},900);
+  }
+  function check(){
+    if(ready&&fonts){setTimeout(finish,Math.max(0,minShown-(performance.now()-start)));}
+  }
+  if(document.readyState==='complete'){ready=true;}
+  window.addEventListener('load',function(){ready=true;check();});
+  if(document.fonts&&document.fonts.ready){
+    document.fonts.ready.then(function(){fonts=true;check();});
+  }else{fonts=true;check();}
+  /* 兜底：个别资源卡住时不阻塞进入 */
+  setTimeout(function(){ready=true;fonts=true;check();},4000);
 })();
 </script>
 </body>
